@@ -1,0 +1,42 @@
+sample: Data sample
+guatemala: Población por departamento en Guatemala
+select_sample: Select a sample
+paste_pl: Select your data and paste it here
+paste: Copy & paste
+upload_doc: CSV/XLSX upload
+upload_lb: Click on UPLOAD and choose your file
+upload_bt_lb: Upload
+upload_pl: Open your data
+google: Import Google sheet
+google_sh_lb: Paste your public url
+google_sh_pl: https://docs.google.com/spreadsheets/...
+google_sh_pg_lb: Sheet to read
+upload_data: Data Upload
+view_data: Data Preview
+var_selector: Select variables to graph
+edit_viz: Visualization design
+view_viz: Visualization Preview
+viz_type: Visualization Type
+titles: Titles
+colors: Colors
+title: Title
+subtitle: Subtitle
+caption: Caption
+theme: Theme
+graph_style: Graph style
+palette_colors: Palette
+summarize_num: Numeric process
+agg: Aggregation
+agg_info: You can choose the type of numeric variable processing. 
+sum: Sum
+mean: Mean
+median: Median
+format_num_sample: Numeric format
+suffix: Suffix
+prefix: Prefix
+summarize_cat: Categorical process
+format_cat_sample: Category format
+tooltip: Tooltip
+process_na: Process missing values (NA)
+drop_na: Drop NA
+na_label: Label NA

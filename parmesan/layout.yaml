@@ -1,0 +1,29 @@
+titles:
+  label: titles
+  inputs:
+    - title
+    - subtitle
+    - caption
+    - tooltip
+graph_style:
+  label: graph_style
+  inputs:
+    - theme
+    - background_color
+    - palette_colors
+summarize_num:
+  label: summarize_num
+  inputs:
+    - agg
+    - format_num_sample
+    - prefix
+    - suffix
+summarize_cat:
+  label: summarize_cat
+  inputs:
+    - format_cat_sample
+process_na:
+  label: process_na
+  inputs:
+    - drop_na
+    - na_label

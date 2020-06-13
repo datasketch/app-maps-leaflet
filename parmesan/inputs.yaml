@@ -1,0 +1,108 @@
+---
+title:
+  show: true
+  input_type: textInput
+  input_params:
+    label: title
+    value:
+subtitle:
+  show: true
+  input_type: textInput
+  input_params:
+    label: subtitle
+    value:
+caption:
+  show: true
+  input_type: textInput
+  input_params:
+    label: caption
+    value: 
+tooltip:
+  show: true
+  input_type: textInput
+  input_params:
+    label: tooltip
+    value: 
+theme:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: theme
+    choices:
+      Barlow Ligth:
+      - light
+      Barlow Dark:
+      - dark
+background_color:
+  show: true
+  input_type: colourInput
+  input_params:
+    label: background_color
+    value: background()
+palette_colors:
+  show: true
+  input_type: colorPaletteInput
+  input_params:
+    label: palette_colors
+    colors: agg_palette()
+agg:
+  show: true
+  show_if:
+    hasdataNum():
+      equals: true
+  input_type: selectizeInput
+  input_params:
+    label: agg
+    choices: agg_opts()
+  input_info:
+    icon: info-circle
+    text: agg_info
+drop_na:
+  show: true
+  show_if:
+    hasdataNA():
+      equals: true
+  input_type: checkboxInput
+  input_params:
+    label: drop_na
+    value: false
+na_label: 
+  show: true
+  show_if_all:
+   hasdataNA():
+      equals: true
+   input_drop_na():
+      equals: false
+  input_type: textInput
+  input_params:
+    label: na_label
+    value: "(NA)"
+format_num_sample:
+  show: true
+  input_type: textInput
+  input_params:
+    label: format_num_sample
+    value: "1,234."
+format_cat_sample:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: format_cat_sample
+    choices: format_cat_opts()
+    selected: 
+    multiple: true
+    options: 
+        maxItems:
+        - 1
+suffix:
+  show: true
+  input_type: textInput
+  input_params:
+    label: suffix
+    value:
+prefix:
+  show: true
+  input_type: textInput
+  input_params:
+    label: prefix
+    value:

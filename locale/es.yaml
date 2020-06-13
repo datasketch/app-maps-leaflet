@@ -1,0 +1,63 @@
+sample: Datos de muestra
+guatemala: Population by departments in Guatemala
+select_sample: Selecciona una muestra
+paste: Copiar & pegar
+paste_pl: Selecciona tu data y pegala aquí
+upload_doc: Subir CSV/XLSX 
+upload_lb: Click en BUSCAR y elige tu archivo
+upload_bt_lb: BUSCAR
+upload_pl: Sube tu data
+google: Importar desde Google sheet
+google_sh_lb: Pega la url pública
+google_sh_pl: https://docs.google.com/spreadsheets/...
+google_sh_pg_lb: Pestaña a leer
+upload_data: Carga de datos
+view_data: Vista de datos
+var_selector: Selecciona variables a gráficar
+edit_viz: Diseño de visualización
+view_viz: Vista de visualización
+viz_type: Tipo de visualización
+titles: Títulos
+colors: Colores
+title: Título
+subtitle: Subtítulo
+caption: Creditos
+theme: Tema
+graph_style: Estilo gráfico
+palette_colors: Paleta
+color_by: Colorear por
+summarize_num: Procesamiento números
+agg: Agregación
+agg_info: Puedes escoger el tipo de procesamiento de tu variable númerica.
+sum: Total
+mean: Promedio
+median: Mediana
+percentage: Calcular porcentaje
+sort: Ordenar por resultado numerico
+nocas: Sin orden
+asc: Ascendente
+desc: Descendiente
+slice_n: Ranking
+format_num_sample: Formato Numerico
+suffix: Sufijo
+prefix: Prefijo
+summarize_cat: Procesamiento categorías
+order: Ordenar según categorias 
+format_cat_sample: Formato de categorias
+label_wrap: Cortar palabras
+chart: Gráfico
+graph_type: Tipo de gráfico
+tooltip: Tooltip
+orientation: Orientación
+grouped: Agrupadas
+stacked: Apiladas
+spline: Spline
+highlight_value: Resaltar categoría
+highlight_value_color: Color
+process_na: Tratamiento de valores faltantes (NA)
+drop_na: Remover NA
+na_label: Etiqueta NA
+legend: Leyenda
+drop_na_legend: Remover NA de leyenda
+order_legend: Ordernar categorias
+label_wrap_legend: Cortar palabras

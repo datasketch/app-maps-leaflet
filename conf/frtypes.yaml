@@ -1,0 +1,49 @@
+---
+Cat:
+- bar
+- pie
+- donut
+- bubbles
+- treemap
+Cat-Num:
+- bar
+- pie
+- donut
+- bubbles
+- treemap
+Yea:
+- line
+- area
+Yea-Num:
+- line
+- area
+Cat-Cat:
+- bar
+- treemap
+- bubbles
+Cat-Cat-Num:
+- bar
+- treemap
+- bubbles
+Cat-Yea:
+- bar
+- line
+- area
+- treemap
+- bubbles
+Cat-Yea-Num:
+- bar
+- line
+- area
+- treemap
+- bubbles
+Yea-Cat-Num:
+- bar
+- line
+- area
+- treemap
+- bubbles
+Num-Num:
+- scatter
+Cat-Num-Num:
+- scatter
