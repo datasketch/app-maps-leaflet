@@ -12,6 +12,7 @@ library(knitr)
 
 
 frtypes_doc <- suppressWarnings(yaml::read_yaml("conf/frtypes.yaml"))
+availableMaps <- suppressWarnings(yaml::read_yaml("conf/availableMaps.yaml")) 
 
 ui <- panelsPage(
   useShi18ny(),
@@ -32,7 +33,7 @@ ui <- panelsPage(
   panel(title = ui_("edit_viz"),
         color = "chardonnay",
         width = 350,
-        body = uiOutput("controls")
+        body = uiOutput("search_map")#uiOutput("controls")
   ),
   panel(title =  ui_("view_viz"),
         color = "chardonnay",
@@ -221,6 +222,16 @@ server <- function(input, output, session) {
   output$map_lflt <- renderLeaflet({
     lflt_choropleth_GnmNum(data = data_load(), map_name = "gtm_departments")
   })  
+  
+  
+  output$search_map <- renderUI({
+    shinyinvoer::searchInput("id_country", availableMaps, "buscar")
+  })
+  
+  
+  observe({
+    print(input$id_country)
+  })
   
 }
 

@@ -1,0 +1,111 @@
+Africa:
+  - africa_countries  
+America:
+  - american_countries
+Agentina provincias: 
+  - arg_provinces
+Argentina departmentos:
+  - arg_departments
+Asia:
+  - asia_countries   
+Bolivia:
+  - bol_provinces  
+  - bol_departments
+Brasil estados:
+  - bra_states
+Brasil municipalidades: 
+  - bra_municipalities   
+Suiza cantonces:
+  - che_cantons
+Chile provincias:
+  - chl_provinces
+Chila regiones:
+  - chl_regions
+Bogotá localidades:
+  - col_dc_districts    
+Colombia Región Amazonas:
+  - col_amazonas     
+Colombia Región Andina:
+  - col_andina   
+Colombia Región Caribe:
+  - col_caribe         
+Colombia Región Orinoquía:
+  - col_orioquia
+Colombia Región Pacífico:
+  - col_pacifico        
+Colombia departamentos: 
+  - col_departments 
+Colombia municipios:
+  - col_municipalities  
+Costa Rica privincias:
+  - cri_provinces     
+Costa Rica cantones:
+  - cri_cantons     
+Cuba regiones:
+  - cub_regions
+Cuba municipios:
+  - cub_municipalities  
+Ecuador provincias:
+  - ecu_provinces  
+Ecuador cantones:
+  - ecu_cantons  
+Europa:
+  - europa_countries    
+Guatemala departmentos:
+  - gtm_departments    
+Guatemala municipios:
+  - gtm_municipalities  
+República de Guyana regiones:
+  - guy_regions  
+República de Guyana Consejos vecinales:
+  - guy_village
+América Latina:
+  - latam_countries     
+México estados:
+  - mex_states 
+México minicipios:
+  - mex_municipalities     
+Nicaragua departamentos:
+  - nic_departments   
+Nicaragua municipios:
+  - nic_municipalities
+Norte América:
+  - north_america_countries
+Oceania:
+  - oceania_countries  
+Panamá provincias:
+  - pan_provinces 
+Panamá distritos:
+  - pan_districs 
+Perú regiones:
+  - per_regions
+Perú departamentos:
+  - per_departments
+Paraguay distritos:
+  - pry_districs   
+Paraguay departamentos:
+  - pry_departments    
+Salvador departamentos:
+  - slv_departments   
+Salvador municipios:
+  - slv_municipalities 
+Sur America:
+  - south_america_countries 
+Surinam distritos:
+  - sur_districs  
+Surinam suburbios:
+  - sur_located     
+Trinidad y Tobago regiones:
+  - tto_regions         
+Uruguay departamentos:
+  - ury_departments   
+Estados unidos:
+  - usa_states  
+Estados unidos condados:
+  - usa_counties
+Venezuela estados:
+  - venezuela_states
+Venezuela distritos:
+  - venezuela_districs  
+Mundo:
+  - world_countries  
