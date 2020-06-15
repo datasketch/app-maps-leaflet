@@ -25,6 +25,7 @@ caption: Caption
 theme: Theme
 graph_style: Graph style
 palette_colors: Palette
+map_color_scale: Color scale
 summarize_num: Numeric process
 agg: Aggregation
 agg_info: You can choose the type of numeric variable processing. 

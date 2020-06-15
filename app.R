@@ -33,7 +33,7 @@ ui <- panelsPage(
   panel(title = ui_("edit_viz"),
         color = "chardonnay",
         width = 350,
-        body = uiOutput("search_map")#uiOutput("controls")
+        body = uiOutput("controls")
   ),
   panel(title =  ui_("view_viz"),
         color = "chardonnay",
@@ -195,10 +195,15 @@ server <- function(input, output, session) {
     input$drop_na
   })
   
+  hasTiles <- reactive({
+    is.null(input$map_tiles)
+  })
+  
 # Reactivos de inputs -----------------------------------------------------
 
   background <- reactive({
-    '#FEAFEA'
+   color <- "#FFFFFF"
+   color
   })  
   
   
@@ -216,22 +221,84 @@ server <- function(input, output, session) {
     choices 
   })
     
+  agg_scale <- reactive({
+    c("sa")
+  })
+  
+  
+  map_tiles <- reactive({
+    c("OpenStreetMap",
+      "OpenStreetMap.Mapnik", 
+      "OpenTopoMap", 
+      "OpenStreetMap.HOT",
+      "OpenMapSurfer.AdminBounds",
+      "OpenMapSurfer.Roads",
+      "OpenMapSurfer.Hillshade",
+      "Stamen.TonerHybrid",
+      "Stamen.Toner",
+      "Stamen.TonerBackground",
+      "Stamen.TonerLite",
+      "Stamen.Watercolor",
+      "Stamen.Terrain",
+      "Stamen.TerrainBackground",
+      "Esri",
+      "Esri.WorldStreetMap",
+      "Esri.DeLorme",
+      "Esri.WorldTopoMap",
+      "Esri.WorldImagery",
+      "Esri.WorldShadedRelief",
+      "Esri.WorldTerrain", 
+      "Esri.WorldPhysical",
+      "Esri.OceanBasemap",
+      "Esri.NatGeoWorldMap",
+      "Esri.WorldGrayCanvas",
+      "HERE.reducedDay",
+      "HERE.normalDayGrey",
+      "HERE.hybridDay",
+      "CartoDB",
+      "CartoDB.PositronNoLabels",
+      "CartoDB.Voyager",            
+      "CartoDB.VoyagerNoLabels",
+      "CartoDB.DarkMatter",          
+      "CartoDB.DarkMatterNoLabels",
+      "MtbMap",
+      "HikeBike",
+      "HikeBike.HikeBike",
+      "HikeBike.HillShading",
+      "NASAGIBS.ModisTerraBands367CR", 
+      "NASAGIBS.ViirsEarthAtNight2012",
+      "Wikimedia",
+      "GeoportailFrance",
+      "GeoportailFrance.ignMaps",
+      "GeoportailFrance.maps",
+      "GeoportailFrance.orthos"
+      )
+  })
     
   # Mapa leaflet ------------------------------------------------------------
+  opts_viz <- reactive({
+    opts_viz <- parmesan_input()
+    if (is.null(opts_viz)) return()
+    opts_viz$palette_colors <- paste0("#", opts_viz$palette_colors)
+    opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
+    opts_viz
+  })
   
   output$map_lflt <- renderLeaflet({
-    lflt_choropleth_GnmNum(data = data_load(), map_name = "gtm_departments")
+    #data = data_load(),map_name = "gtm_departments"
+   print(opts_viz())
+    lflt_choropleth_GnmNum(data=NULL, map_name = "world_countries", opts_viz())
   })  
   
-  
-  output$search_map <- renderUI({
-    shinyinvoer::searchInput("id_country", availableMaps, "buscar")
-  })
-  
-  
-  observe({
-    print(input$id_country)
-  })
+
+  # output$search_map <- renderUI({
+  #   shinyinvoer::searchInput("id_country", availableMaps, "buscar")
+  # })
+  # 
+  # 
+  # observe({
+  #   print(input$id_country)
+  # })
   
 }
 

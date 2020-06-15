@@ -25,19 +25,13 @@ caption: Creditos
 theme: Tema
 graph_style: Estilo gráfico
 palette_colors: Paleta
-color_by: Colorear por
+map_color_scale: Escala
 summarize_num: Procesamiento números
 agg: Agregación
 agg_info: Puedes escoger el tipo de procesamiento de tu variable númerica.
 sum: Total
 mean: Promedio
 median: Mediana
-percentage: Calcular porcentaje
-sort: Ordenar por resultado numerico
-nocas: Sin orden
-asc: Ascendente
-desc: Descendiente
-slice_n: Ranking
 format_num_sample: Formato Numerico
 suffix: Sufijo
 prefix: Prefijo
@@ -48,16 +42,6 @@ label_wrap: Cortar palabras
 chart: Gráfico
 graph_type: Tipo de gráfico
 tooltip: Tooltip
-orientation: Orientación
-grouped: Agrupadas
-stacked: Apiladas
-spline: Spline
-highlight_value: Resaltar categoría
-highlight_value_color: Color
 process_na: Tratamiento de valores faltantes (NA)
 drop_na: Remover NA
 na_label: Etiqueta NA
-legend: Leyenda
-drop_na_legend: Remover NA de leyenda
-order_legend: Ordernar categorias
-label_wrap_legend: Cortar palabras

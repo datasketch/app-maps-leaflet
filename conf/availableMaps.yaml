@@ -37,7 +37,7 @@ Colombia departamentos:
   - col_departments 
 Colombia municipios:
   - col_municipalities  
-Costa Rica privincias:
+Costa Rica provincias:
   - cri_provinces     
 Costa Rica cantones:
   - cri_cantons     
@@ -63,7 +63,7 @@ América Latina:
   - latam_countries     
 México estados:
   - mex_states 
-México minicipios:
+México municipios:
   - mex_municipalities     
 Nicaragua departamentos:
   - nic_departments   

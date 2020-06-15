@@ -35,6 +35,9 @@ theme:
       - dark
 background_color:
   show: true
+  show_if_all:
+   hasTiles():
+      equals: true
   input_type: colourInput
   input_params:
     label: background_color
@@ -45,6 +48,30 @@ palette_colors:
   input_params:
     label: palette_colors
     colors: agg_palette()
+map_color_scale:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: map_color_scale
+    colors: agg_scale()
+topo_fill_opacity:
+  show: true
+  input_type: sliderInput
+  input_params:
+    label: topo_fill_opacity
+    min: 0
+    max: 1
+    step: 0.1
+    value: 0.2
+na_color:
+  show: true
+  show_if_all:
+   hasTiles():
+      equals: true
+  input_type: colourInput
+  input_params:
+    label: na_color
+    value: "#FEAFEA"
 agg:
   show: true
   show_if:
@@ -87,7 +114,7 @@ format_cat_sample:
   show: true
   input_type: selectizeInput
   input_params:
-    label: format_cat_sample
+    label: format_cat_sample 
     choices: format_cat_opts()
     selected: 
     multiple: true
@@ -106,3 +133,29 @@ prefix:
   input_params:
     label: prefix
     value:
+map_tiles:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: map_tiles
+    choices: map_tiles()
+    selected: 
+    multiple: true
+    options: 
+        maxItems:
+        - 1
+map_zoom:
+  show: true
+  input_type: checkboxInput
+  input_params:
+    label: map_zoom
+    value: false
+map_min_zoom:
+  show: true
+  input_type: sliderInput
+  input_params:
+    label: map_min_zoom
+    min: 1
+    max: 17
+    step: 1
+    value: 1
