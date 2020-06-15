@@ -10,7 +10,7 @@ graph_style:
   inputs:
     - theme
     - topo_fill_opacity
-    - na_color
+    - border_color
     - map_tiles
     - background_color
     - palette_colors
@@ -19,3 +19,13 @@ zoom:
   inputs:
     - map_zoom
     - map_min_zoom
+legend:
+  label: legend
+  inputs:
+    - map_color_scale
+    - map_bins
+    - map_quantile
+    - na_color
+    - legend_show
+    - na_label
+    - legend_position

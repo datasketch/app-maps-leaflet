@@ -53,7 +53,7 @@ map_color_scale:
   input_type: selectizeInput
   input_params:
     label: map_color_scale
-    colors: agg_scale()
+    choices: agg_scale()
 topo_fill_opacity:
   show: true
   input_type: sliderInput
@@ -65,13 +65,16 @@ topo_fill_opacity:
     value: 0.2
 na_color:
   show: true
-  show_if_all:
-   hasTiles():
-      equals: true
   input_type: colourInput
   input_params:
     label: na_color
     value: "#FEAFEA"
+border_color:
+  show: true
+  input_type: colourInput
+  input_params:
+    label: border_color
+    value: "#CCCCCC"
 agg:
   show: true
   show_if:
@@ -98,8 +101,8 @@ na_label:
   show_if_all:
    hasdataNA():
       equals: true
-   input_drop_na():
-      equals: false
+   input_legend_show():
+      equals: true
   input_type: textInput
   input_params:
     label: na_label
@@ -159,3 +162,40 @@ map_min_zoom:
     max: 17
     step: 1
     value: 1
+map_bins:
+  show: true
+  show_if:
+   input_color_scale():
+      equals: Bins
+  input_type: numericInput
+  input_params:
+    label: map_bins
+    value: 4
+    min: 2
+    max: 10
+map_quantile:
+  show: true
+  show_if:
+   input_color_scale():
+      equals: Quantile
+  input_type: numericInput
+  input_params:
+    label: map_quantile
+    value: 4
+    min: 2
+    max: 10
+legend_show:
+  show: true
+  input_type: checkboxInput
+  input_params:
+    label: legend_show
+    value: true
+legend_position:
+  show: true
+  show_if:
+  input_legend_show():
+    equals: true
+  input_type: selectizeInput
+  input_params:
+    label: legend_position
+    choices: agg_legend_position()

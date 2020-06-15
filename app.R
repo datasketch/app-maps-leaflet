@@ -199,6 +199,19 @@ server <- function(input, output, session) {
     is.null(input$map_tiles)
   })
   
+  input_color_scale <- reactive({
+    input$map_color_scale
+  })
+  
+  input_legend_show <- reactive({
+    input$legend_show
+  })
+  
+  agg_legend_position <- reactive({
+    c("topright", "bottomright", "bottomleft",
+      "topleft")
+  })
+  
 # Reactivos de inputs -----------------------------------------------------
 
   background <- reactive({
@@ -208,7 +221,7 @@ server <- function(input, output, session) {
   
   
   agg_palette <- reactive({
-    c('#FEAFEA', '#AEFAEF')
+    c( '#AEFAEF', '#4f083d')
   })
   
   agg_opts <- reactive({
@@ -222,7 +235,7 @@ server <- function(input, output, session) {
   })
     
   agg_scale <- reactive({
-    c("sa")
+    c("Numeric", "Bins", "Quantile")
   })
   
   
@@ -287,7 +300,7 @@ server <- function(input, output, session) {
   output$map_lflt <- renderLeaflet({
     #data = data_load(),map_name = "gtm_departments"
    print(opts_viz())
-    lflt_choropleth_GnmNum(data=NULL, map_name = "world_countries", opts_viz())
+    lflt_choropleth_GnmNum(data=sample_data("Gnm-Num", 100), map_name = "world_countries", opts_viz())
   })  
   
 
