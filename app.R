@@ -38,7 +38,14 @@ ui <- panelsPage(
   panel(title =  ui_("view_viz"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = leafletOutput("map_lflt", height = 550),
+        body = 
+        div(leafletOutput("map_lflt", height = 550),
+            shinypanels::modal(id = 'test', title = ui_('info_modal'),
+                               downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"))
+                               
+            ),
+            br(),
+            div(style="text-align:right;", shinypanels::modalButton(label = "Download", modal_id = "test"))),
         footer = uiOutput("viz_icons"))
 )
 
@@ -178,8 +185,41 @@ server <- function(input, output, session) {
                   output = output,
                   env = environment())  
   
-  
 
+# Tipo de mapas -----------------------------------------------------------
+  
+  ftype_draw <- reactive({
+    # if (is.null(dic_draw())) return()
+    # paste0(dic_draw()$hdType, collapse = "-")
+    "Gnm-Num"
+  })
+  
+  possible_viz <- reactive({
+    if (is.null(ftype_draw())) return()
+    frtypes_doc[[ftype_draw()]]
+  })
+  
+  
+  actual_but <- reactiveValues(active = 'choropleth')
+  
+  observe({
+    viz_rec <- possible_viz()
+    if (is.null(viz_rec)) return()
+    if (is.null(input$viz_selection)) return()
+    if (!( input$viz_selection %in% viz_rec)) {
+      actual_but$active <- viz_rec[1]  
+    } else {
+      actual_but$active <- input$viz_selection
+    }
+  })
+  output$viz_icons <- renderUI({
+    buttonImageInput('viz_selection',
+                     i_('viz_type', lang()), 
+                     images = possible_viz(),
+                     path = 'img/svg/',
+                     format = 'svg',
+                     active = actual_but$active)
+  })
   
 
 # Condicionales de inputs -------------------------------------------------
@@ -299,21 +339,22 @@ server <- function(input, output, session) {
     opts_viz
   })
   
-  output$map_lflt <- renderLeaflet({
+  
+  lftl_viz <- reactive({
     #data = data_load(),map_name = "gtm_departments"
-   print(opts_viz())
-    lflt_choropleth_GnmNum(data=sample_data("Gnm-Num", 100), map_name = "world_countries", opts_viz())
+    print(opts_viz())
+    lflt_choropleth_GnmNum(data=sample_data("Gnm-Num", 100), map_name = "world_countries", opts_viz())  
+  })
+  
+  output$map_lflt <- renderLeaflet({
+    if (is.null(opts_viz())) return()
+    lftl_viz()  
   })  
   
 
-  # output$search_map <- renderUI({
-  #   shinyinvoer::searchInput("id_country", availableMaps, "buscar")
-  # })
-  # 
-  # 
-  # observe({
-  #   print(input$id_country)
-  # })
+  callModule(downloadImage, "down_lfltmagic", graph = lftl_viz(), 
+             lib = "highcharter", formats = c("html", "jpeg", "pdf", "png"))
+  
   
 }
 
