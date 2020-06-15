@@ -190,6 +190,15 @@ legend_show:
   input_params:
     label: legend_show
     value: true
+legend_title:
+  show: true
+  show_if:
+  input_legend_show():
+    equals: true
+  input_type: textInput
+  input_params:
+    label: legend_title
+    value:
 legend_position:
   show: true
   show_if:

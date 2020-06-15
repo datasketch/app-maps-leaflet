@@ -27,5 +27,17 @@ legend:
     - map_quantile
     - na_color
     - legend_show
+    - legend_title
     - na_label
     - legend_position
+summarize_num:
+  label: summarize_num
+  inputs:
+    - agg
+    - format_num_sample
+    - prefix
+    - suffix
+summarize_cat:
+  label: summarize_cat
+  inputs:
+    - format_cat_sample

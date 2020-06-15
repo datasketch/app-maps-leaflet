@@ -225,7 +225,9 @@ server <- function(input, output, session) {
   })
   
   agg_opts <- reactive({
-    "a"
+    choices <- c("sum", "mean", "median")
+    names(choices) <- i_(c("sum", "mean", "median"), lang = lang())
+    choices
   })
   
   format_cat_opts <- reactive({
