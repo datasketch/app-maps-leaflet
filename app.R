@@ -86,10 +86,12 @@ server <- function(input, output, session) {
   labels <- reactive({
     
     lang <- lang()
-    list_files <- list.files("data/samples/")
-    list_files <- list_files[grep(paste0('_', lang), list_files)]
-    files <- paste0("data/samples/", list_files)
-    names(files) <- i_(c("guatemala"), lang = lang)
+    # list_files <- list.files("data/samples/")
+    # list_files <- list_files[grep(paste0('_', lang), list_files)]
+    # files <- paste0("data/samples/", list_files)
+    # names(files) <- i_(c("guatemala"), lang = lang)
+    files <- "data/samples/peru-covid.csv"
+    names(files) <- "Data positivo por COVID-19 - [Ministerio de Salud ]"#i_(c("emissions", "population", "leaders"), lang = lang)
     
     
     list(sampleLabel = i_("select_sample", lang()), 
@@ -343,7 +345,8 @@ server <- function(input, output, session) {
   lftl_viz <- reactive({
     #data = data_load(),map_name = "gtm_departments"
     print(opts_viz())
-    lflt_choropleth_GnmNum(data=sample_data("Gnm-Num", 100), map_name = "world_countries", opts_viz())  
+    #lflt_choropleth_GnmNum(data=data_load(), map_name = "per_regions", opts_viz())  
+    do.call(paste0("lflt_", actual_but$active, "_GnmNum"), list(data=data_load(), map_name = "per_regions", opts_viz()))
   })
   
   output$map_lflt <- renderLeaflet({

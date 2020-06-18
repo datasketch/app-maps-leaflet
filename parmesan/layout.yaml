@@ -41,3 +41,8 @@ summarize_cat:
   label: summarize_cat
   inputs:
     - format_cat_sample
+bubbles:
+  label: bubbles
+  inputs:
+    - map_min_size
+    - map_max_size
