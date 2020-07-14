@@ -1,3 +1,61 @@
+map_available: Mapas
+map_name: Divisiones territoriales
+africa_countries: África países
+países_americanos: América países
+arg_provinces: Argentina provincias
+arg_departments: Argentina departamentos
+países_asia: Asia
+bol_provinces: Bolivia provincias
+bol_departments: Bolivia departamentos
+bra_states: Brasil estados
+bra_municipalities: Brasil municipios
+che_cantons: Suiza cantones
+chl_provinces: Chile provincias
+chl_regions: Chile regiones
+col_dc_districts: Bogotá localidades
+col_amazonas: Colombia Región Amazonas
+col_andina: Colombia Región Andina
+col_caribe: Colombia Región Caribe
+col_orioquia: Colombia Región Orinoquía
+col_pacifico: Colombia Región Pacifico
+col_departments: Colombia departamentos
+col_municipalities: Colombia municipios
+cri_provinces: Costa Rica provincias
+cri_cantons: Costa Rica cantones
+cub_regions: Cuba regiones
+cub_municipalities: Cuba municipios
+provincias del ecu: Ecuador provincias
+ecu_cantons: Ecuador cantones
+europa_countries: Europa
+gtm_departments: Guatemala departamentos
+gtm_municipalities: Guatemala municipios
+guy_regions: República de Guyana regiones
+guy_village: República de Guyana Consejos vecinales
+países_latam: América Latina
+estados_mex: México estados
+mex_municipalities: México municipios
+nic_departments: Nicaragua departamentos
+nic_municipalities: Nicaragua municipios
+north_america_countries: Norteamérica
+oceania_countries: Oceanía
+pan_provinces: Panamá provincias
+pan_districs: Panamá distritos
+per_regions: Perú regiones
+por_departamentos: Perú departamentos
+pry_districs: Paraguay departamentos
+pry_departments: Paraguay departamentos
+slv_departments: Salvador departamentos
+slv_municipalities: Salvador municipios
+south_america_countries: Sur America
+sur_districs: Surinam distritos
+sur_located: Surinam suburbios
+tto_regions: Trinidad y Tobago regiones
+ury_departments: Uruguay departamentos
+usa_states: Estados Unidos estados
+usa_counties: Estados unidos condados
+venezuela_states: Venezuela estados
+venezuela_districs: Venezuela distritos
+world_countries: Mundo
 sample: Datos de muestra
 guatemala: Population by departments in Guatemala
 select_sample: Selecciona una muestra
@@ -45,3 +103,22 @@ tooltip: Tooltip
 process_na: Tratamiento de valores faltantes (NA)
 drop_na: Remover NA
 na_label: Etiqueta NA
+border_color: Color de borde
+border_weight: Grosor de borde
+map_tiles: Tiles predefinidos
+background_color: Color de fondo
+topo_fill_opacity: Opacidad 
+na_color: Color de mapa
+Numeric: Continua
+Bins: Intervalos
+Quantile: Cuantil
+map_bins: Número de intervalos
+map_quantile: Número de cuantiles
+legend: Leyenda
+legend_title: Título
+map_zoom: Mostrar zoom
+map_graticule: Mostrar graticula
+graticule: Graticula
+map_graticule_interval: Separación
+grid_size: Grosor de línea
+grid_color: Color de línea

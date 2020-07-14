@@ -1,3 +1,7 @@
+map_available:
+  label: map_available
+  inputs:
+    - map_name
 titles:
   label: titles
   inputs:
@@ -9,27 +13,14 @@ graph_style:
   label: graph_style
   inputs:
     - theme
-    - topo_fill_opacity
-    - border_color
+    - palette_colors
     - map_tiles
     - background_color
-    - palette_colors
-zoom:
-  label: zoom
-  inputs:
-    - map_zoom
-    - map_min_zoom
-legend:
-  label: legend
-  inputs:
-    - map_color_scale
-    - map_bins
-    - map_quantile
+    - border_weight
+    - border_color
     - na_color
-    - legend_show
-    - legend_title
-    - na_label
-    - legend_position
+    - topo_fill_opacity
+    - map_zoom
 summarize_num:
   label: summarize_num
   inputs:
@@ -37,12 +28,21 @@ summarize_num:
     - format_num_sample
     - prefix
     - suffix
-summarize_cat:
-  label: summarize_cat
+legend:
+  label: legend
+  inputs: 
+    - map_color_scale
+    - map_bins
+    - map_quantile
+    - legend_title
+graticule:
+  label: graticule
   inputs:
-    - format_cat_sample
-bubbles:
-  label: bubbles
-  inputs:
-    - map_min_size
-    - map_max_size
+    - map_graticule
+    - map_graticule_interval
+    - grid_size
+    - grid_color
+#logo:
+#  label: logo
+#  inputs:
+#    - branding_include

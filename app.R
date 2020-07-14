@@ -5,7 +5,6 @@ library(parmesan)
 library(shinyinvoer)
 library(shi18ny)
 library(dsmodules)
-library(colourpicker)
 library(hotr)
 library(dsthemer)
 library(knitr)
@@ -26,7 +25,7 @@ ui <- panelsPage(
         width = 450,
         body = div(
           div(
-            uiOutput("select_var"),
+            uiOutput("select_var"), #verbatimTextOutput("select_var"),#
             uiOutput("dataset") 
           )
         )),
@@ -38,14 +37,7 @@ ui <- panelsPage(
   panel(title =  ui_("view_viz"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = 
-        div(leafletOutput("map_lflt", height = 550),
-            shinypanels::modal(id = 'test', title = ui_('info_modal'),
-                               downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"))
-                               
-            ),
-            br(),
-            div(style="text-align:right;", shinypanels::modalButton(label = "Download", modal_id = "test"))),
+        body = leafletOutput("map_lflt"),
         footer = uiOutput("viz_icons"))
 )
 
@@ -64,13 +56,28 @@ server <- function(input, output, session) {
     uiLangUpdate(input$shi18ny_ui_classes, lang())
   })
   
-  map_name <- reactiveValues(id = NULL)
+  info_url <- reactiveValues(id = NULL)
   observe({
     query <- parseQueryString(session$clientData$url_search)
-    if (is.null(query)) query <- "world"
-    map_name$id <- query
+    if (identical(query, list())) return()
+    info_url$id <- query
+  })
+ 
+  info_map <- reactiveValues(name = "world_countries")
+  info_org <- reactiveValues(name = "datasketch")
+  observe({
+    if (is.null(info_url$id)) return()
+    info_map$name <- strsplit(info_url$id$maps, split = ",") %>% unlist()
+    info_org$name <- info_url$id$org
   })
   
+  map_name_opts <- reactive({
+    choices <- info_map$name
+    names(choices) <- i_(info_map$name, lang = lang())
+    choices
+  })
+  
+
   
   # Modulo de carga de datos ------------------------------------------------
   
@@ -82,16 +89,16 @@ server <- function(input, output, session) {
                  selected =  "sampleData")
   })
   
-  # lista labels módulos en idioma seleccionado
   labels <- reactive({
     
     lang <- lang()
-    # list_files <- list.files("data/samples/")
-    # list_files <- list_files[grep(paste0('_', lang), list_files)]
-    # files <- paste0("data/samples/", list_files)
+    list_files <- list.files("data/samples/")
+    map_name_url <- info_map$name
+    list_files <- list_files[grep(map_name_url, list_files)]
+    list_files <- list_files[grep(paste0('_', lang), list_files)]
+    files <- paste0("data/samples/", list_files)
     # names(files) <- i_(c("guatemala"), lang = lang)
-    files <- "data/samples/peru-covid.csv"
-    names(files) <- "Data positivo por COVID-19 - [Ministerio de Salud ]"#i_(c("emissions", "population", "leaders"), lang = lang)
+    #names(files) <- "Data positivo por COVID-19 - [Ministerio de Salud ]"#i_(c("emissions", "population", "leaders"), lang = lang)
     
     
     list(sampleLabel = i_("select_sample", lang()), 
@@ -118,7 +125,6 @@ server <- function(input, output, session) {
                           "initial_data",
                           labels()))
   })
-  
   
   
   # Vista de datos ----------------------------------------------------------
@@ -149,9 +155,9 @@ server <- function(input, output, session) {
     #print(dic_load())
     available_fTypes <- names(frtypes_doc)
     data_ftype <- data_fringe()$frtype
-    if(is.null(dic_load)) return()
-    
-    if (data_ftype %in% available_fTypes) { 
+    if(is.null(dic_load())) return()
+
+    if (data_ftype %in% available_fTypes) {
       data_order <- dic_load()$id
     } else if (grepl("Cat|Yea|Dat",data_ftype)&grepl("Num",data_ftype)){
       data_order <- c(dic_load()$id[grep("Cat|Yea|Dat", dic_load()$hdType)[1]],
@@ -159,111 +165,42 @@ server <- function(input, output, session) {
     } else {
       data_order <- dic_load()$id[grep("Cat|Num", dic_load()$hdType)[1]]
     }
-    
+
     list_var <- dic_load()$id
     if (is.null(list_var)) return()
     names(list_var) <- dic_load()$label[match(list_var, dic_load()$id)]
-    
-    
+    list_var
+
     selectizeInput("var_order",
                    i_("var_selector", lang()),
                    choices = list_var,
-                   multiple = TRUE, 
+                   multiple = TRUE,
                    selected = data_order,
                    options = list(plugins= list('remove_button', 'drag_drop'))
     )
   })
   
-
-  # Renderizar inputs con parmesan ------------------------------------------
+  # Preparación data para graficar ------------------------------------------
   
-  parmesan <- parmesan_load()
-  parmesan_input <- parmesan_watch(input, parmesan)
-  parmesan_alert(parmesan, env = environment())
-  parmesan_lang <- reactive({i_(parmesan, lang(), keys = c("label", "inputs", "text"))})
-  output_parmesan("controls", 
-                  parmesan = parmesan_lang,
-                  input = input, 
-                  output = output,
-                  env = environment())  
-  
-
-# Tipo de mapas -----------------------------------------------------------
-  
-  ftype_draw <- reactive({
-    # if (is.null(dic_draw())) return()
-    # paste0(dic_draw()$hdType, collapse = "-")
-    "Gnm-Num"
+  data_draw <- reactive({
+    var_select <- input$var_order
+    if (is.null(var_select)) return()
+    d <- data_load()[var_select] 
+    names(d) <- dic_draw()$label
+    d
   })
   
-  possible_viz <- reactive({
-    if (is.null(ftype_draw())) return()
-    frtypes_doc[[ftype_draw()]]
-  })
-  
-  
-  actual_but <- reactiveValues(active = 'choropleth')
-  
-  observe({
-    viz_rec <- possible_viz()
-    if (is.null(viz_rec)) return()
-    if (is.null(input$viz_selection)) return()
-    if (!( input$viz_selection %in% viz_rec)) {
-      actual_but$active <- viz_rec[1]  
-    } else {
-      actual_but$active <- input$viz_selection
-    }
-  })
-  output$viz_icons <- renderUI({
-    buttonImageInput('viz_selection',
-                     i_('viz_type', lang()), 
-                     images = possible_viz(),
-                     path = 'img/svg/',
-                     format = 'svg',
-                     active = actual_but$active)
+  dic_draw <- reactive({
+    var_select <- input$var_order
+    if (is.null(var_select)) return()
+    dic_load() %>% filter(id %in% var_select)
   })
   
 
-# Condicionales de inputs -------------------------------------------------
-
+# Condicionales -----------------------------------------------------------
+ 
   hasdataNum <- reactive({
-    TRUE
-  })
-  hasdataNA <- reactive({
-    TRUE
-  })
-  
-  input_drop_na <- reactive({
-    input$drop_na
-  })
-  
-  hasTiles <- reactive({
-    is.null(input$map_tiles)
-  })
-  
-  input_color_scale <- reactive({
-    input$map_color_scale
-  })
-  
-  input_legend_show <- reactive({
-    input$legend_show
-  })
-  
-  agg_legend_position <- reactive({
-    c("topright", "bottomright", "bottomleft",
-      "topleft")
-  })
-  
-# Reactivos de inputs -----------------------------------------------------
-
-  background <- reactive({
-   color <- "#FFFFFF"
-   color
-  })  
-  
-  
-  agg_palette <- reactive({
-    c( '#AEFAEF', '#4f083d')
+    TRUE %in% grepl('Num', dic_draw()$hdType)
   })
   
   agg_opts <- reactive({
@@ -271,26 +208,44 @@ server <- function(input, output, session) {
     names(choices) <- i_(c("sum", "mean", "median"), lang = lang())
     choices
   })
-  
-  format_cat_opts <- reactive({
-    choices <- c("As Title", "UPPER", "lower", "Firstupper")
-    names(choices) <- i_(c("Title", "Upper", "Lower", "Firstupper"), lang = lang())
-    choices 
-  })
-    
-  agg_scale <- reactive({
-    c("Numeric", "Bins", "Quantile")
+
+  conditional_border_weight <- reactive({
+    bw <- input$border_weight
+    bc <- TRUE
+    if (bw == 0) bc <- FALSE
+    bc
   })
   
+  conditional_map_tiles <- reactive({
+    mt <- input$map_tiles
+    mb <- TRUE
+    if (!is.null(mt)) mb <- FALSE
+    mb
+  })
+  
+  conditional_graticule <- reactive({
+    input$map_graticule
+  })
+  
+  tooltip_info <- reactive({
+    "hola"
+  })
+  
+  map_color_scale <- reactive({
+    choices <- c("Numeric", "Bins", "Quantile")
+    names(choices) <- i_(c("Numeric", "Bins", "Quantile"), lang = lang())
+    choices
+  })
+  
+  color_scale_select <- reactive({
+    input$map_color_scale
+  })
   
   map_tiles <- reactive({
     c("OpenStreetMap",
       "OpenStreetMap.Mapnik", 
       "OpenTopoMap", 
       "OpenStreetMap.HOT",
-      "OpenMapSurfer.AdminBounds",
-      "OpenMapSurfer.Roads",
-      "OpenMapSurfer.Hillshade",
       "Stamen.TonerHybrid",
       "Stamen.Toner",
       "Stamen.TonerBackground",
@@ -329,36 +284,73 @@ server <- function(input, output, session) {
       "GeoportailFrance.ignMaps",
       "GeoportailFrance.maps",
       "GeoportailFrance.orthos"
-      )
+    )
   })
-    
-  # Mapa leaflet ------------------------------------------------------------
+  
+  parmesan <- parmesan_load()
+  parmesan_input <- parmesan_watch(input, parmesan)
+  parmesan_alert(parmesan, env = environment())
+  parmesan_lang <- reactive({i_(parmesan, lang(), keys = c("label", "inputs", "text"))})
+  output_parmesan("controls", 
+                  parmesan = parmesan_lang,
+                  input = input, 
+                  output = output,
+                  env = environment())
+  
+  
   opts_viz <- reactive({
     opts_viz <- parmesan_input()
     if (is.null(opts_viz)) return()
-    opts_viz$palette_colors <- paste0("#", opts_viz$palette_colors)
     opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
     opts_viz
   })
   
+  theme_load <- reactive({
+    theme_select <- input$theme
+    if (is.null(theme_select)) return()
+    theme_get(info_org$name, theme = theme_select)
+  })
   
-  lftl_viz <- reactive({
-    #data = data_load(),map_name = "gtm_departments"
-    print(opts_viz())
-    #lflt_choropleth_GnmNum(data=data_load(), map_name = "per_regions", opts_viz())  
-    do.call(paste0("lflt_", actual_but$active, "_GnmNum"), list(data=data_load(), map_name = "per_regions", opts_viz()))
+  grid_color <- reactive({
+    theme_load()$grid_color
+  })
+  
+  background <- reactive({
+    theme_load()$background_color
+  })
+  
+  na_color <- reactive({
+    theme_load()$na_color
+  })
+  
+  agg_palette <- reactive({
+    #if (is.null(color_scale_select())) return()
+    p <- theme_load()$palette_colors
+    if (color_scale_select() == "Numeric") p <- p[1:2]
+    p
+  })
+  
+  theme_draw <- reactive({
+    l <- theme_load()
+    l <- l[setdiff(names(l), c('background_color', 'palette_colors', 'branding_include', 
+                               'na_color', 'grid_color', 'grid_size'))]
+    l
+  })
+  
+    lftl_viz <- reactive({
+    print(data_draw())
+    # do.call(paste0("lflt_", "choropleth", "_GnmNum"),
+    #         c(list(opts_viz()[2])))
+    viz <- "lflt_choropleth_GnmNum"
+    do.call(viz, c(list(data = data_draw(), opts = c(opts_viz(), theme_draw()))))
+    #lflt_choropleth_GnmNum(opts = c(opts_viz(), theme_draw()))
   })
   
   output$map_lflt <- renderLeaflet({
     if (is.null(opts_viz())) return()
     lftl_viz()  
   })  
-  
 
-  callModule(downloadImage, "down_lfltmagic", graph = lftl_viz(), 
-             lib = "highcharter", formats = c("html", "jpeg", "pdf", "png"))
-  
-  
 }
 
 

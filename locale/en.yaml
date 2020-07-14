@@ -1,3 +1,60 @@
+map_name: Maps
+africa_countries: Africa countries
+american_countries: America countries
+arg_provinces: Agentina provinces
+arg_departments: Argentina departments
+asia_countries: Asia
+bol_provinces: Bolivia provinces
+bol_departments: Bolivia departments
+bra_states: Brazil states
+bra_municipalities: Brazil municipalities
+che_cantons: Switzerland cantonces
+chl_provinces: Chile provinces
+chl_regions: Chila regions
+col_dc_districts: Bogotá localities
+col_amazonas: Colombia Amazonas Region
+col_andina: Colombia Andean Region
+Caribbean Col: Colombia Caribbean Region
+col_orioquia: Colombia Orinoquía Region
+col_pacifico: Colombia Pacific Region
+col_departments: Colombia departments
+col_municipalities: Colombia municipalities
+cri_provinces: Costa Rica provinces
+cri_cantons: Costa Rica cantons
+cub_regions: Cuba regions
+cub_municipalities: Cuba municipalities
+ecu_provinces: Ecuador provinces
+ecu_cantons: Ecuador cantons
+europa_countries: Europe
+gtm_departments: Guatemala departments
+gtm_municipalities: Guatemala municipalities
+guy_regions: Republic of Guyana regions
+guy_village: Republic of Guyana Neighborhood Councils
+latam_countries: Latin America
+mex_states: Mexico states
+mex_municipalities: Mexico municipalities
+nic_departments: Nicaragua departments
+nic_municipalities: Nicaragua municipalities
+north_america_countries: North America
+oceania_countries: Oceania countries
+pan_provinces: Panama provinces
+pan_districs: Panama districts
+per_regions: Peru regions
+per_departments: Peru departments
+pry_districs: Paraguay districts
+pry_departments: Paraguay departments
+slv_departments: Salvador departments
+slv_municipalities: Salvador municipalities
+south_america_countries: South America
+sur_districs: Suriname districts
+sur_located: Suriname suburbs
+tto_regions: Trinidad and Tobago regions
+ury_departments: Uruguay departments
+usa_states: United States
+usa_counties: united states counties
+venezuela_states: Venezuela states
+venezuela_districs: Venezuela districts
+world_countries: World
 sample: Data sample
 guatemala: Población por departamento en Guatemala
 select_sample: Select a sample
@@ -41,3 +98,22 @@ tooltip: Tooltip
 process_na: Process missing values (NA)
 drop_na: Drop NA
 na_label: Label NA
+border_color: Border color
+border_weight: Border weight
+map_tiles: Tiles map
+background_color: Background color
+topo_fill_opacity: Fill opacity
+na_color: Default color
+Numeric: Continuos
+Bins: Bins
+Quantile: Quantile
+map_bins: Bins number
+map_quantile: Quantiles number
+legend: Legend
+legend_title: Title
+map_zoom: View zoom
+map_graticule: View graticule
+Graticule: Graticule
+map_graticule_interval: Interval
+grid_size: Grid size
+grid_color: Grid color

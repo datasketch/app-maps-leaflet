@@ -1,4 +1,10 @@
 ---
+map_name:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: map_name
+    choices: map_name_opts()
 title:
   show: true
   input_type: textInput
@@ -23,37 +29,93 @@ tooltip:
   input_params:
     label: tooltip
     value: 
+  input_info:
+    icon: info-circle
+    text: Aquí puede modificar la información contenida que aparece al pasar el mouse sobre el mapa, puedes ajustar el texto como quieras, usando HTML y llamando las variables dentro de llaves.
 theme:
   show: true
   input_type: selectizeInput
   input_params:
     label: theme
     choices:
-      Barlow Ligth:
+      Light:
       - light
-      Barlow Dark:
+      Dark:
       - dark
-background_color:
+map_color_scale:
   show: true
-  show_if_all:
-   hasTiles():
-      equals: true
-  input_type: colourInput
+  input_type: selectizeInput
   input_params:
-    label: background_color
-    value: background()
+    label: map_color_scale
+    choices: map_color_scale()
+map_bins:
+  show: true
+  show_if:
+   color_scale_select():
+     equals: Bins
+  input_type: numericInput
+  input_params:
+    label: map_bins
+    value: 5
+    min: 1
+    max: 30
+map_quantile:
+  show: true
+  show_if:
+   color_scale_select():
+     equals: Quantile
+  input_type: numericInput
+  input_params:
+    label: map_quantile
+    value: 4
+    min: 1
+    max: 30
 palette_colors:
   show: true
   input_type: colorPaletteInput
   input_params:
     label: palette_colors
     colors: agg_palette()
-map_color_scale:
+map_tiles:
   show: true
   input_type: selectizeInput
   input_params:
-    label: map_color_scale
-    choices: agg_scale()
+    label: map_tiles
+    choices: map_tiles()
+    selected: 
+    multiple: true
+    options: 
+      maxItems:
+      - 1
+background_color:
+  show: true
+  show_if:
+   conditional_map_tiles():
+    equals: true
+  input_type: colorPaletteInput
+  input_params:
+    label: background_color
+    colors: background()
+    max_colors: 1
+border_weight:
+  show: true
+  input_type: sliderInput
+  input_params:
+    label: border_weight
+    min: 0
+    max: 10
+    step: 1
+    value: 2
+border_color:
+  show: true
+  show_if:
+   conditional_border_weight():
+    equals: true
+  input_type: colorPaletteInput
+  input_params:
+    label: border_color
+    colors: '#293845'
+    max_colors: 1
 topo_fill_opacity:
   show: true
   input_type: sliderInput
@@ -62,19 +124,68 @@ topo_fill_opacity:
     min: 0
     max: 1
     step: 0.1
-    value: 0.7
+    value: 0.8
 na_color:
   show: true
-  input_type: colourInput
+  input_type: colorPaletteInput
   input_params:
     label: na_color
-    value: "#FAFAFA"
-border_color:
+    colors: na_color()
+    max_colors: 1
+  input_info:
+    icon: info-circle
+    text: Color por defecto cuando no hay data
+map_zoom:
   show: true
-  input_type: colourInput
+  input_type: checkboxInput
   input_params:
-    label: border_color
-    value: "#CCCCCC"
+    label: map_zoom
+    value: FALSE
+legend_title:
+  show: true
+  input_type: textInput
+  input_params:
+    label: legend_title
+    value:
+map_graticule:
+  show: true
+  input_type: checkboxInput
+  input_params:
+    label: map_graticule
+    value: FALSE
+map_graticule_interval:
+  show: true
+  show_if:
+   conditional_graticule():
+    equals: true 
+  input_type: sliderInput
+  input_params:
+    label: map_graticule_interval
+    min: 1
+    max: 100
+    step: 1
+    value: 30
+grid_size:
+  show: true
+  show_if:
+   conditional_graticule():
+    equals: true
+  input_type: numericInput
+  input_params:
+    label: grid_size
+    value: 2
+    min: 1
+    max: 10
+grid_color:
+  show: true
+  show_if:
+   conditional_graticule():
+    equals: true
+  input_type: colorPaletteInput
+  input_params:
+    label: grid_color
+    colors: grid_color()
+    max_colors: 1
 agg:
   show: true
   show_if:
@@ -87,43 +198,12 @@ agg:
   input_info:
     icon: info-circle
     text: agg_info
-drop_na:
-  show: true
-  show_if:
-    hasdataNA():
-      equals: true
-  input_type: checkboxInput
-  input_params:
-    label: drop_na
-    value: false
-na_label: 
-  show: true
-  show_if_all:
-   hasdataNA():
-      equals: true
-   input_legend_show():
-      equals: true
-  input_type: textInput
-  input_params:
-    label: na_label
-    value: "(NA)"
 format_num_sample:
   show: true
   input_type: textInput
   input_params:
     label: format_num_sample
-    value: "1,234."
-format_cat_sample:
-  show: true
-  input_type: selectizeInput
-  input_params:
-    label: format_cat_sample 
-    choices: format_cat_opts()
-    selected: 
-    multiple: true
-    options: 
-        maxItems:
-        - 1
+    value: "1,234.5"
 suffix:
   show: true
   input_type: textInput
@@ -136,93 +216,9 @@ prefix:
   input_params:
     label: prefix
     value:
-map_tiles:
-  show: true
-  input_type: selectizeInput
-  input_params:
-    label: map_tiles
-    choices: map_tiles()
-    selected: 
-    multiple: true
-    options: 
-        maxItems:
-        - 1
-map_zoom:
+branding_include:
   show: true
   input_type: checkboxInput
   input_params:
-    label: map_zoom
-    value: false
-map_min_zoom:
-  show: true
-  input_type: sliderInput
-  input_params:
-    label: map_min_zoom
-    min: 1
-    max: 17
-    step: 1
-    value: 1
-map_bins:
-  show: true
-  show_if:
-   input_color_scale():
-      equals: Bins
-  input_type: numericInput
-  input_params:
-    label: map_bins
-    value: 4
-    min: 2
-    max: 10
-map_quantile:
-  show: true
-  show_if:
-   input_color_scale():
-      equals: Quantile
-  input_type: numericInput
-  input_params:
-    label: map_quantile
-    value: 4
-    min: 2
-    max: 10
-legend_show:
-  show: true
-  input_type: checkboxInput
-  input_params:
-    label: legend_show
+    label: branding_include
     value: true
-legend_title:
-  show: true
-  show_if:
-  input_legend_show():
-    equals: true
-  input_type: textInput
-  input_params:
-    label: legend_title
-    value:
-legend_position:
-  show: true
-  show_if:
-  input_legend_show():
-    equals: true
-  input_type: selectizeInput
-  input_params:
-    label: legend_position
-    choices: agg_legend_position()
-map_min_size:
-  show: true
-  input_type: sliderInput
-  input_params:
-    label: map_min_size
-    min: 3
-    max: 20
-    step: 1
-    value: 5
-map_max_size:
-  show: true
-  input_type: sliderInput
-  input_params:
-    label: map_max_size
-    min: 21
-    max: 35
-    step: 1
-    value: 20
