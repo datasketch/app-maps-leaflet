@@ -11,7 +11,6 @@ library(knitr)
 
 
 frtypes_doc <- suppressWarnings(yaml::read_yaml("conf/frtypes.yaml"))
-availableMaps <- suppressWarnings(yaml::read_yaml("conf/availableMaps.yaml")) 
 
 ui <- panelsPage(
   useShi18ny(),
@@ -198,6 +197,44 @@ server <- function(input, output, session) {
   })
   
 
+# Posibles graficos -------------------------------------------------------
+  
+  ftype_draw <- reactive({
+    if (is.null(dic_draw())) return()
+    paste0(dic_draw()$hdType, collapse = "-")
+  })
+  
+  possible_viz <- reactive({
+    if (is.null(ftype_draw())) return()
+    frtypes_doc[[ftype_draw()]]
+  })
+  
+
+  actual_but <- reactiveValues(active = 'choropleth')
+
+  observe({
+    viz_rec <- possible_viz()
+    if (is.null(viz_rec)) return()
+    if (is.null(input$viz_selection)) return()
+    if (!( input$viz_selection %in% viz_rec)) {
+      actual_but$active <- viz_rec[1]
+    } else {
+      actual_but$active <- input$viz_selection
+    }
+  })
+
+  output$viz_icons <- renderUI({
+    print("hola")
+    print(ftype_draw())
+    print(possible_viz())
+    buttonImageInput('viz_selection',
+                     i_('viz_type', lang()),
+                     images = possible_viz(),
+                     path = 'img/svg/',
+                     format = 'svg',
+                     active = actual_but$active)
+  })
+  
 # Condicionales -----------------------------------------------------------
  
   hasdataNum <- reactive({
@@ -342,7 +379,7 @@ server <- function(input, output, session) {
     print(data_draw())
     # do.call(paste0("lflt_", "choropleth", "_GnmNum"),
     #         c(list(opts_viz()[2])))
-    viz <- "lflt_choropleth_GnmNum"
+    viz <- paste0("lflt_", actual_but$active, "_GnmNum")
     do.call(viz, c(list(data = data_draw(), opts = c(opts_viz(), theme_draw())
                    ))
             )

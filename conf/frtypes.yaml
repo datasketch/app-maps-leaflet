@@ -1,19 +1,19 @@
 ---
 Cat:
-- bubbles
 - choropleth
-CatNum:
 - bubbles
+Cat-Num:
 - choropleth
+- bubbles
 Gcd:
-- bubbles
 - choropleth
+- bubbles
 Gcd-Num:
-- bubbles
 - choropleth
+- bubbles
 Gnm:
-- bubbles
 - choropleth
+- bubbles
 Gnm-Num:
-- bubbles
 - choropleth
+- bubbles
