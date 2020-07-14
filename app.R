@@ -35,9 +35,10 @@ ui <- panelsPage(
         body = uiOutput("controls")
   ),
   panel(title =  ui_("view_viz"),
+        title_plugin = downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = leafletOutput("map_lflt"),
+        body = leafletOutput("map_lflt", height = 500),
         footer = uiOutput("viz_icons"))
 )
 
@@ -342,7 +343,9 @@ server <- function(input, output, session) {
     # do.call(paste0("lflt_", "choropleth", "_GnmNum"),
     #         c(list(opts_viz()[2])))
     viz <- "lflt_choropleth_GnmNum"
-    do.call(viz, c(list(data = data_draw(), opts = c(opts_viz(), theme_draw()))))
+    do.call(viz, c(list(data = data_draw(), opts = c(opts_viz(), theme_draw())
+                   ))
+            )
     #lflt_choropleth_GnmNum(opts = c(opts_viz(), theme_draw()))
   })
   
@@ -350,6 +353,9 @@ server <- function(input, output, session) {
     if (is.null(opts_viz())) return()
     lftl_viz()  
   })  
+  
+  callModule(downloadImage, "down_lfltmagic", graph = lftl_viz(), 
+             lib = "highcharter", formats = c("html", "png", "jpeg", "pdf"))
 
 }
 
