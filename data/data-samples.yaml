@@ -1,0 +1,12 @@
+data/samples/gtm_departments_poblacion_es.csv:
+ - Población por departamentos en Guatemala
+data/samples/gtm_departments_poblacion_en.csv:
+ - Departments population in Guatemala
+data/samples/world_countries_en.csv:
+ - World population
+data/samples/world_countries_es.csv:
+ - Población en el Mundo
+data/samples/sin_data_en.csv:
+ - Without data
+data/samples/sin_data_es.csv:
+ - Sin data
