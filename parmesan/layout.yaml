@@ -24,7 +24,7 @@ graph_style:
 summarize_num:
   label: summarize_num
   inputs:
-    - agg
+    #- agg
     - format_num_sample
     - prefix
     - suffix
@@ -42,7 +42,7 @@ graticule:
     - map_graticule_interval
     - grid_size
     - grid_color
-#logo:
-#  label: logo
-#  inputs:
-#    - branding_include
+logo:
+  label: logo
+  inputs:
+    - branding_include
