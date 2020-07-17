@@ -41,7 +41,7 @@ ui <- panelsPage(
         title_plugin = downloadImageUI("down_ggmagic", "Download", c("svg", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = leafletOutput("map_ggmagic"),
+        body = leafletOutput("map_lflt"),
         footer = uiOutput("viz_icons"))
 )
 
@@ -237,7 +237,7 @@ server <- function(input, output, session) {
   
   ftype_draw <- reactive({
     if (is.null(dic_draw())) {
-      x <- "Gnm"
+      x <- "Gnm-Num"
     } else {
       gt <- geoType(data = data_draw(), map_name = info_map$name)
       x <- paste0(dic_draw()$hdType, collapse = "-")
@@ -418,7 +418,7 @@ server <- function(input, output, session) {
   })
   
   lftl_viz <- reactive({
-    #print(data_draw())
+    print(data_draw())
     # do.call(paste0("lflt_", "choropleth", "_GnmNum"),
     #         c(list(opts_viz()[2])))
     geotype <- gsub("-", "", ftype_draw())
