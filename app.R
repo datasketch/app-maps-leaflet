@@ -41,7 +41,7 @@ ui <- panelsPage(
         title_plugin = downloadImageUI("down_ggmagic", "Download", c("svg", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = plotOutput("map_ggmagic"),
+        body = leafletOutput("map_ggmagic"),
         footer = uiOutput("viz_icons"))
 )
 
@@ -110,8 +110,6 @@ server <- function(input, output, session) {
     list_files <- list.files("data/samples/")
     map_name_url <- info_map$name
     list_files <- list_files[grep(paste0(map_name_url, collapse = "|"), list_files)]
-    print("hola")
-    print(list_files)
     if (identical(list_files, character(0)))  return()
     list_files
   })
@@ -424,6 +422,7 @@ server <- function(input, output, session) {
     # do.call(paste0("lflt_", "choropleth", "_GnmNum"),
     #         c(list(opts_viz()[2])))
     geotype <- gsub("-", "", ftype_draw())
+    print(geotype)
     viz <- paste0("lflt_", actual_but$active, "_", geotype)
     do.call(viz, c(list(data = data_draw(), opts = c(opts_viz(), theme_draw())
     ))
