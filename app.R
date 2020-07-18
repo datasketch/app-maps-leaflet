@@ -38,7 +38,7 @@ ui <- panelsPage(
         body = uiOutput("controls")
   ),
   panel(title =  ui_("view_viz"),
-        title_plugin = downloadImageUI("down_ggmagic", "Download", c("svg", "png", "jpeg", "pdf"), display = "dropdown"),
+        title_plugin = downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
         body = leafletOutput("map_lflt"),
