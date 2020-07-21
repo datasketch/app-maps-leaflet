@@ -122,3 +122,5 @@ graticule: Graticula
 map_graticule_interval: Separación
 grid_size: Grosor de línea
 grid_color: Color de línea
+download_plot: Descarga
+without_data: Mapa sin datos

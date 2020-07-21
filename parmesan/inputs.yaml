@@ -1,6 +1,9 @@
 ---
 map_name:
   show: true
+#  show_if:
+#   show_list_maps:
+#     equal: true
   input_type: selectizeInput
   input_params:
     label: map_name
@@ -82,7 +85,7 @@ map_tiles:
   input_params:
     label: map_tiles
     choices: map_tiles()
-    selected: 
+    selected: map_tiles_default()
     multiple: true
     options: 
       maxItems:
@@ -105,7 +108,7 @@ border_weight:
     min: 0
     max: 10
     step: 1
-    value: 2
+    value: 1
 border_color:
   show: true
   show_if:
@@ -140,7 +143,7 @@ map_zoom:
   input_type: checkboxInput
   input_params:
     label: map_zoom
-    value: FALSE
+    value: true
 legend_title:
   show: true
   input_type: textInput
@@ -149,9 +152,11 @@ legend_title:
     value:
 map_graticule:
   show: true
-  input_type: checkboxInput
+  input_type: toggleSwitchInput
   input_params:
     label: map_graticule
+    on_label: ""
+    off_label: ""
     value: FALSE
 map_graticule_interval:
   show: true
@@ -164,7 +169,7 @@ map_graticule_interval:
     min: 1
     max: 100
     step: 1
-    value: 30
+    value: 23
 grid_size:
   show: true
   show_if:
@@ -221,4 +226,28 @@ branding_include:
   input_type: checkboxInput
   input_params:
     label: branding_include
-    value: true
+    value: branding_include()
+map_min_size:
+  show: true
+  show_if:
+   viz_last_active():
+    equals: bubbles 
+  input_type: sliderInput
+  input_params:
+    label: map_min_size
+    min: 1
+    max: 50
+    step: 1
+    value: 5
+map_max_size:
+  show: true
+  show_if:
+   viz_last_active():
+    equals: bubbles 
+  input_type: sliderInput
+  input_params:
+    label: map_max_size
+    min: min_map_bubble()
+    max: 100
+    step: 1
+    value: 30

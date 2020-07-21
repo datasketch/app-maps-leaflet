@@ -9,4 +9,4 @@ data/samples/world_countries_es.csv:
 data/samples/sin_data_en.csv:
  - Without data
 data/samples/sin_data_es.csv:
- - Sin data
+ - Sin falsa

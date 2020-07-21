@@ -80,6 +80,7 @@ title: Title
 subtitle: Subtitle
 caption: Caption
 theme: Theme
+map_available: Maps
 graph_style: Graph style
 palette_colors: Palette
 map_color_scale: Color scale
@@ -117,3 +118,5 @@ Graticule: Graticule
 map_graticule_interval: Interval
 grid_size: Grid size
 grid_color: Grid color
+download_plot: Download
+without_data: Map without data

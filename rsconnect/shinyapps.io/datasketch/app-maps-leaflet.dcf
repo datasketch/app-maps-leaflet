@@ -1,0 +1,12 @@
+name: app-maps-leaflet
+title: app-maps-leaflet
+username:
+account: datasketch
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2587366
+bundleId: 3418335
+url: https://datasketch.shinyapps.io/app-maps-leaflet/
+when: 1595360765.0589
+asMultiple: FALSE
+asStatic: FALSE

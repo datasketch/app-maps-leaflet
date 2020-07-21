@@ -5,44 +5,46 @@ map_available:
 titles:
   label: titles
   inputs:
-    - title
-    - subtitle
-    - caption
-    - tooltip
+  - title
+  - subtitle
+  - caption
+  - tooltip
 graph_style:
   label: graph_style
   inputs:
-    - theme
-    - palette_colors
-    - map_tiles
-    - background_color
-    - border_weight
-    - border_color
-    - na_color
-    - topo_fill_opacity
-    - map_zoom
+  - theme
+  - palette_colors
+  - map_tiles
+  - background_color
+  - border_weight
+  - border_color
+  - na_color
+  - topo_fill_opacity
+  - map_zoom
+  - map_min_size
+  - map_max_size
 summarize_num:
   label: summarize_num
   inputs:
-    #- agg
-    - format_num_sample
-    - prefix
-    - suffix
+  - agg
+  - format_num_sample
+  - prefix
+  - suffix
 legend:
-  label: legend
+  label: legend 
   inputs: 
-    - map_color_scale
-    - map_bins
-    - map_quantile
-    - legend_title
+  - map_color_scale
+  - map_bins
+  - map_quantile
+  - legend_title
 graticule:
   label: graticule
   inputs:
-    - map_graticule
-    - map_graticule_interval
-    - grid_size
-    - grid_color
+  - map_graticule
+  - map_graticule_interval
+  - grid_size
+  - grid_color
 logo:
   label: logo
   inputs:
-    - branding_include
+  - branding_include
