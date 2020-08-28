@@ -57,6 +57,7 @@ venezuela_districs: Venezuela districts
 world_countries: World
 sample: Data sample
 guatemala: Población por departamento en Guatemala
+table_label: How do you want to start exploring?
 select_sample: Select a sample
 paste_pl: Select your data and paste it here
 paste: Copy & paste
@@ -96,15 +97,18 @@ prefix: Prefix
 summarize_cat: Categorical process
 format_cat_sample: Category format
 tooltip: Tooltip
+tool_info: You can customize the information that appears when you pass the mause over the graph, you just have to call your variables inside curly braces.
 process_na: Process missing values (NA)
 drop_na: Drop NA
 na_label: Label NA
 border_color: Border color
 border_weight: Border weight
 map_tiles: Tiles map
+tiles_info: You can remove the tile and choose a background color
 background_color: Background color
 topo_fill_opacity: Fill opacity
 na_color: Default color
+na_info: Color when data in NULL
 Numeric: Continuos
 Bins: Bins
 Quantile: Quantile
@@ -120,3 +124,16 @@ grid_size: Grid size
 grid_color: Grid color
 download_plot: Download
 without_data: Map without data
+branding_include: Logo include
+error_down: There has been a problem; try again later.
+download_viz: Download
+get_link: Get link
+gl_name: Name
+gl_slug: Slug
+gl_description: Description
+gl_license: License
+gl_tags: Tags
+gl_category: Category
+gl_save: Save in dslibrary
+gl_url: URL
+gl_iframe: Copy to embed

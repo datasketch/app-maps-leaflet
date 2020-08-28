@@ -58,6 +58,7 @@ venezuela_districs: Venezuela distritos
 world_countries: Mundo
 sample: Datos de muestra
 guatemala: Population by departments in Guatemala
+table_label: ¿Cómo quieres comenzar a explorar?
 select_sample: Selecciona una muestra
 paste: Copiar & pegar
 paste_pl: Selecciona tu data y pegala aquí
@@ -100,15 +101,18 @@ label_wrap: Cortar palabras
 chart: Gráfico
 graph_type: Tipo de gráfico
 tooltip: Tooltip
+tool_info: Puedes personalizar la infomación que aparece al pasar el puntero sobre el gráfico, solo debes llamar tus variables dentro de llaves.
 process_na: Tratamiento de valores faltantes (NA)
 drop_na: Remover NA
 na_label: Etiqueta NA
 border_color: Color de borde
 border_weight: Grosor de borde
 map_tiles: Tiles predefinidos
+tiles_info: Tu puedes eliminar el tile y elegir un color de fondo
 background_color: Color de fondo
 topo_fill_opacity: Opacidad 
 na_color: Color de mapa
+na_info: Color por defecto cuando no hay data
 Numeric: Continua
 Bins: Intervalos
 Quantile: Cuantil
@@ -124,3 +128,16 @@ grid_size: Grosor de línea
 grid_color: Color de línea
 download_plot: Descarga
 without_data: Mapa sin datos
+branding_include: Mostrar logo
+error_down: ¡Oh, algo a sucedido!, por favor intenta más tarde.
+download_viz: Descarga
+get_link: Obtener enlace
+gl_name: Nombre
+gl_slug: Slug
+gl_description: Descripción
+gl_license: Licencia
+gl_tags: Etiquetas
+gl_category: Categorías
+gl_save: Guardar en dslibrary
+gl_url: URL
+gl_iframe: Copiar para embeber

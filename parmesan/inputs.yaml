@@ -34,7 +34,7 @@ tooltip:
     value: 
   input_info:
     icon: info-circle
-    text: Aquí puede modificar la información contenida que aparece al pasar el mouse sobre el mapa, puedes ajustar el texto como quieras, usando HTML y llamando las variables dentro de llaves.
+    text: tooltip_info()
 theme:
   show: true
   input_type: selectizeInput
@@ -85,11 +85,14 @@ map_tiles:
   input_params:
     label: map_tiles
     choices: map_tiles()
-    selected: map_tiles_default()
+    selected: "OpenStreetMap"
     multiple: true
     options: 
       maxItems:
       - 1
+  input_info:
+    icon: info-circle
+    text: map_tiles_info()
 background_color:
   show: true
   show_if:
@@ -137,7 +140,7 @@ na_color:
     max_colors: 1
   input_info:
     icon: info-circle
-    text: Color por defecto cuando no hay data
+    text: na_info()
 map_zoom:
   show: true
   input_type: checkboxInput
@@ -193,16 +196,10 @@ grid_color:
     max_colors: 1
 agg:
   show: true
-  show_if:
-    hasdataNum():
-      equals: true
   input_type: selectizeInput
   input_params:
     label: agg
     choices: agg_opts()
-  input_info:
-    icon: info-circle
-    text: agg_info
 format_num_sample:
   show: true
   input_type: textInput
@@ -226,7 +223,7 @@ branding_include:
   input_type: checkboxInput
   input_params:
     label: branding_include
-    value: branding_include()
+    value: true
 map_min_size:
   show: true
   show_if:
@@ -251,3 +248,4 @@ map_max_size:
     max: 100
     step: 1
     value: 30
+    
