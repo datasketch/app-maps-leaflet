@@ -5,8 +5,8 @@ account: datasketch
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2587366
-bundleId: 3565711
+bundleId: 3565937
 url: https://datasketch.shinyapps.io/app-maps-leaflet/
-when: 1598577643.91543
+when: 1598585636.70517
 asMultiple: FALSE
 asStatic: FALSE

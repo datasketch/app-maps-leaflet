@@ -45,7 +45,7 @@ ui <- panelsPage(
           #withImage(
           #verbatimTextOutput("select_var"),#
           verbatimTextOutput("test_url"),
-          withLoader(uiOutput("dataset"), type = "image",loader = "img/loading_fucsia.gif"), 
+          withLoader(uiOutput("dataset"), type = "image",loader = "img/loading_gris.gif"), 
           # file_location = "img/loading_fucsia.gif"
           #)
         )),
@@ -62,7 +62,7 @@ ui <- panelsPage(
         #downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = withLoader(leafletOutput("view_lftl_viz"), type = "image",loader = "img/loading_fucsia.gif"),
+        body = withLoader(leafletOutput("view_lftl_viz"), type = "image",loader = "img/loading_gris.gif"),
         footer = uiOutput("viz_icons"))
 )
 
