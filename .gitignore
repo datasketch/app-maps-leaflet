@@ -1,5 +1,4 @@
 .Rproj.user
-.Rhistory
 .RData
 .Ruserdata
 .env
@@ -26,6 +25,6 @@ vignettes/*.pdf
 #*.Rproj
 .Rproj.user
 
-.env
-tmp/*
-.DS_Store
+
+# Deployment files
+rsconnect/
