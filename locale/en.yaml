@@ -137,3 +137,5 @@ gl_category: Category
 gl_save: Save in dslibrary
 gl_url: URL
 gl_iframe: Copy to embed
+data_undefine: We could not determine the type of data you are entering, please select the variable that contains the ID or NAME of the map you want to graph, or check in Maps that you have selected the correct map, if it still does not work, contact support
+ftypes_warning: Select the country you want to plot on MAPS.

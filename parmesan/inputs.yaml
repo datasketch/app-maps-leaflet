@@ -84,7 +84,7 @@ map_tiles:
   input_type: selectizeInput
   input_params:
     label: map_tiles
-    choices: map_tiles()
+    choices: map_tiles_opts()
     selected: "OpenStreetMap"
     multiple: true
     options: 

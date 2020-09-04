@@ -15,8 +15,11 @@ library(knitr)
 library(shinycustomloader)
 library(pins)
 library(dspins)
+library(shinydisconnect)
+
 
 frtypes_doc <- suppressWarnings(yaml::read_yaml("conf/frtypes.yaml"))
+available_ftypes <- names(frtypes_doc)
 data_samples <- suppressWarnings( yaml::read_yaml("data/data-samples.yaml"))
 
 style = "
@@ -30,6 +33,15 @@ right: 5px !important;
 ui <- panelsPage(
   showDebug(),
   useShi18ny(),
+  disconnectMessage(
+    text = "Oh no!, la sesión a finalizado, si estabas trabajando en la app, por favor contacta a soporte y cuentanos que ha sucedido//Oh no, the session has ended, if you were working on the app, please contact support and tell us what has happened",
+    refresh = "O, intenta de nuevo//Or try again",
+    background = "#385573",
+    colour = "white",
+    overlayColour = "grey",
+    overlayOpacity = 0.3,
+    refreshColour = "#FBC140"
+  ),
   langSelectorInput("lang", position = "fixed"),
   styles = style,
   panel(title = ui_("upload_data"),
@@ -43,8 +55,9 @@ ui <- panelsPage(
         body = div(
           #uiOutput("select_var"),
           #withImage(
-          #verbatimTextOutput("select_var"),#
-          verbatimTextOutput("test_url"),
+          uiOutput("info_dis"),
+          uiOutput("select_var"),
+          #verbatimTextOutput("test_url"),
           withLoader(uiOutput("dataset"), type = "image",loader = "img/loading_gris.gif"), 
           # file_location = "img/loading_fucsia.gif"
           #)
@@ -62,7 +75,9 @@ ui <- panelsPage(
         #downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = withLoader(leafletOutput("view_lftl_viz"), type = "image",loader = "img/loading_gris.gif"),
+        body = withLoader(
+          uiOutput("end_sol"),
+          type = "image",loader = "img/loading_gris.gif"),
         footer = uiOutput("viz_icons"))
 )
 
@@ -82,6 +97,19 @@ server <- function(input, output, session) {
   })
   
   
+  # Modulo de carga de datos ------------------------------------------------
+  
+  output$table_input <- renderUI({
+    
+    choices <- c("sampleData", "pasted", "fileUpload", "googleSheets")
+    if (lang() == "") return()
+    names(choices) <- i_(c("sample", "paste", "upload_doc", "google"), lang = lang())
+    tableInputUI("initial_data",
+                 i_("table_label", lang()),
+                 choices = choices,
+                 selected =  "sampleData")
+  })
+  
   # Valores de URL ----------------------------------------------------------
   
   info_url <- reactiveValues(id = NULL)
@@ -89,10 +117,11 @@ server <- function(input, output, session) {
     query <- parseQueryString(session$clientData$url_search)
     if (identical(query, list())) return()
     info_url$id <- query
-  }) 
+  })
+  
+  info_org <- reactiveValues(org = "public")
   info_map <- reactiveValues(name = "world_countries")
-  info_org <- reactiveValues(name = NULL, id = NULL, org = "public")
- 
+  
   observe({
     info_url <- info_url$id
     if (is.null(info_url)) return()
@@ -100,217 +129,222 @@ server <- function(input, output, session) {
     
     if ("org" %in% available_params) {
       info_org$org <- info_url$org }
-    
-    if ("maps" %in% available_params) {
-      if (is.null(info_map$name)) return()
-      info_map$name <- strsplit(info_url$maps, split = ",") %>% unlist()}
-    
-    if ("org_name" %in% available_params) {
-      info_org$name <- info_url$org_name }
-    
-    if ("org_id" %in% available_params) {
-      info_org$id <- info_url$org_id }
-    
+    if ("map_name" %in% available_params) {
+      info_map$name <- strsplit(info_url$map_name, split = ",") %>% unlist()
+    }
   })
-  
-  # input de mapas
-  
+  # Data cuando no hay datos de muestra 
   output$map_input_selector <- renderUI({
     
     if (is.null(info_map$name)) return()
-    if (length(info_map$name) == 1) {
-      return()
-    } else {
-      choices <- info_map$name
-      names(choices) <- i_(info_map$name, lang = lang())
-      selectizeInput("map_name", i_('map_name'), choices)
-    }
+    if (length(info_map$name) == 1) return()
+    choices <- info_map$name
+    names(choices) <- i_(info_map$name, lang = lang())
+    selectizeInput("map_name", i_('map_name'), choices)
+    
   })
   
-  
-  # mapa seleccionado
   
   mapa_print <- reactive({
     if (is.null(info_map$name)) return()
     map_name_select <- input$map_name 
-    if (is.null(map_name_select)) map_name_select <- info_map$name
+    print("devbf")
+    print(map_name_select)
+    if (is.null(map_name_select)) {
+      map_name_select <- info_map$name
+    } 
     map_name_select
   })
-  
-  # Data cuando no hay datos de muestra 
   
   data_fake <- reactive({
     
     map_name_select <- mapa_print()
+    print(map_name_select)
     if (is.null(map_name_select)) return()
     
     list_samples <- list.files("data/samples/")
     this_example <- sum(grepl(map_name_select, list_samples))
-    
+    print("ansdjkssak")
+    print(this_example)
     if (this_example > 0) {
-      l <- list_samples[grepl(map_name_select, list_samples)]
+      l <- try(list_samples[grepl(map_name_select, list_samples)])
       l <- l[grepl(paste0("_",lang()), l)]
       l <- paste0("data/samples/", l)
     } else {
-    l <- map(map_name_select, function(x) {
-      lfltmagic::fakeData(x)
-    })
-    names(l) <- i_(map_name_select, lang())
+      l <- map(map_name_select, function(x) {
+        lfltmagic::fakeData(x)
+      })
     }
+    names(l) <- i_(map_name_select, lang())
     l
   })
-  
-
-  output$table_input <- renderUI({
-    if (is.null(info_map$name)) return()
-    choices <- c("sampleData", "pasted", "fileUpload", "googleSheets")
-    names(choices) <- i_(c("sample", "paste", "upload_doc", "google"), lang = lang())
-    tableInputUI("initial_data", i_("table_label", lang()),
-                 choices = choices,
-                 selected =  "sampleData")
-  })
-  
-  
+  # lista labels módulos en idioma seleccionado
   labels <- reactive({
     
-    map_name_select <- mapa_print()
-    if (is.null(map_name_select)) return()
+    lang <- lang()
+    if (lang == "") return()
     req(data_fake())
-    data_f <- data_fake()
+    files <- data_fake()
+    print("ola")
     
-    list(
-      sampleLabel = i_("select_sample", lang()),
-      sampleFiles = data_f,
-      pasteLabel = i_("paste", lang()),
-      pasteValue = "",
-      pastePlaceholder = i_("paste_pl", lang()),
-      pasteRows = 5,
-      
-      uploadLabel = i_("upload_lb", lang()),
-      uploadButtonLabel = i_("upload_bt_lb", lang()),
-      uploadPlaceholder = i_("upload_pl", lang()),
-      
-      googleSheetLabel = i_("google_sh_lb", lang()),
-      googleSheetValue = "",
-      googleSheetPlaceholder = i_("google_sh_pl", lang()),
-      googleSheetPageLabel = i_("google_sh_pg_lb", lang())
+    list(sampleLabel = i_("select_sample", lang()), 
+         sampleFiles = files,
+         
+         pasteLabel = i_("paste", lang()), 
+         pasteValue = "", 
+         pastePlaceholder = i_("paste_pl", lang()), 
+         pasteRows = 5,
+         
+         uploadLabel = i_("upload_lb", lang()),
+         uploadButtonLabel = i_("upload_bt_lb", lang()), 
+         uploadPlaceholder = i_("upload_pl", lang()),
+         
+         googleSheetLabel = i_("google_sh_lb", lang()),
+         googleSheetValue = "",
+         googleSheetPlaceholder = i_("google_sh_pl", lang()),
+         googleSheetPageLabel = i_("google_sh_pg_lb", lang())
     )
   })
   
   inputData <- eventReactive(labels(), {
-    if (is.null(info_map$name)) return()
     do.call(tableInputServer, c("initial_data", labels()))
   })
   
-
+  # output$debug <- renderPrint({
+  #   inputData()
+  # })
   
   # Vista de datos ----------------------------------------------------------
   
   output$dataset <- renderUI({
-    map_name_select <- mapa_print()
-    if (is.null(map_name_select)) return()
     suppressWarnings(
-      hotr("data_input", data = inputData(), options = list(height = 530), order = NULL)
+      hotr("data_input", data = inputData(), options = list(height = 530))
     )
   })
   
-  
-  # Preparación data --------------------------------------------------------
-  
-  
   data_fringe <- reactive({
-    map_name_select <- mapa_print()
-    if (is.null(map_name_select)) return()
-    if (is.null(input$data_input)) return()
-    suppressWarnings( hotr::hotr_fringe(input$data_input))
+    req(input$data_input)
+    suppressWarnings(hotr::hotr_fringe(input$data_input))
   })
   
-  
   data_load <- reactive({
-    map_name_select <- mapa_print()
-    if (is.null(map_name_select)) return()
     req(data_fringe())
     data_fringe()$data
   })
   
+
+  # Tipo de datos -----------------------------------------------------------
+  
+  
+  guess_ft <- reactive({
+    req(data_load())
+    guess_ft <- guess_ftypes(data = data_load(), mapa_print())
+    guess_ft
+  })
+  
   dic_load <- reactive({
-    map_select <- mapa_print()
-    if (is.null( map_select)) return()
     req(data_fringe())
-    data_fringe()$dic
+    dic <- data_fringe()$dic
+    if (is.null(guess_ft())) {
+      dic <- dic
+    } else {
+      dic$hdType <- guess_ft()  
+    }
+    
+    dic
+  })
+  output$info_dis <- renderUI({
+    req(dic_load())
+    if (!is.null(guess_ft())) return()
+    shinypanels::infomessage(type = "warning" , i_("data_undefine", lang()))
+  })
+  
+  output$select_var <- renderUI({
+  
+    req(dic_load())
+    dic_load <- dic_load()
+
+    data_ftype <- paste0(dic_load$hdType, collapse = "-")
+    print(dic_load$hdType)
+
+    if (sum(c("Gnm", "Gcd") %in% dic_load$hdType) > 0) {
+      if (data_ftype %in% available_ftypes) {
+        select_var <- dic_load$id
+      } else {
+        sample_cats <- NULL
+        if (sum(c("Gcd", "Gnm") %in% dic_load$hdType) > 0) {
+          if(sum(grepl("Gnm|Gcd", dic_load$hdType)) == 0) sample_cats <- NULL
+          sample_cats <- sample(dic_load$id[grepl("Gnm|Gcd", dic_load$hdType)], 1)}
+        sample_nums <- NULL
+        if (sum(c("Num") %in% dic_load$hdType) > 0) {
+          if(sum(grepl("Num", dic_load$hdType)) == 0) sample_nums <- NULL
+          sample_nums <-  sample(dic_load$id[grepl("Num", dic_load$hdType)], 1)}
+        select_var <- c(sample_cats, sample_nums)
+      }
+    } else {
+    select_var <- NULL
+    }
+    
+    list_var <- dic_load$id
+    names(list_var) <- dic_load$label[match(list_var, dic_load$id)]
+
+    if (!is.null(select_var)) names(select_var) <- dic_load$label[match(select_var, dic_load$id)]
+
+    selectizeInput("var_order",
+                   div(class="title-data-select",i_("var_selector", lang())),
+                   choices = list_var,
+                   multiple = TRUE,
+                   selected = select_var,
+                   options = list(plugins= list('remove_button', 'drag_drop'))
+    )
+
   })
   
   
-  # Selector de variables ---------------------------------------------------
+  variables <- reactiveValues(id = NULL)
+  observe({
+    if (is.null(input$var_order)) return()
+    variables$id <- input$var_order
+  })
+  # Preparación data para graficar ------------------------------------------
   
   
-  # data a graficar ---------------------------------------------------------
+  dic_draw <- reactive({
+    req(dic_load())
+    if (is.null(variables$id)) return()
+    var_select <- variables$id
+    dic_load()[dic_load()$id %in% var_select,]
+  })
   
   data_draw <- reactive({
-    req(data_load())
-    d <- data_load()#[var_select] 
+    if (is.null(variables$id)) return()
+    if (is.null(dic_draw())) return()
+    var_select <- dic_draw()$id 
+    d <- data_load()[var_select]
     names(d) <- dic_draw()$label
     d
   })
   
-  dic_draw <- reactive({
-    req(dic_load())
-    dic_load() #%>% filter(id %in% var_select)
-  })   
-  
-  # Tipo de datos -----------------------------------------------------------
+ 
   
   
   ftype_draw <- reactive({
-    
-    req(data_draw())
-    req(dic_draw())
-    map_select <- mapa_print()
-    if (is.null( map_select)) return()
-   
-    x <- "Gnm-Num"
-    if (is.null(dic_draw)) return(x) 
-    x <- paste0(dic_draw()$hdType, collapse = "-")
-    
-    
-    if (x == "Num-Num") {
-      x <- "Gln-Glt"
-    } else if (x == "Num-Num-Num"){
-      x <- "Gln-Glt-Num"
-    } else {
-      gt <- geoType(data = data_draw(), map_name = map_select)
-      if (is.null(gt)) return()
-      x <- gsub("Cat", gt, x)
-    }
-    
-    x
+    if (is.null(dic_draw())) return()
+    paste0(dic_draw()$hdType, collapse = "-")
   })
-
-# Iconos viz
   
   possible_viz <- reactive({
     if (is.null(ftype_draw())) return()
     frtypes_doc[[ftype_draw()]]
   })
   
-  output$viz_icons <- renderUI({
-    
-    # print(ftype_draw())
-    # print(possible_viz())
-    buttonImageInput('viz_selection',
-                     i_('viz_type', lang()),
-                     images = possible_viz(),
-                     path = 'img/svg/',
-                     format = 'svg',
-                     active = actual_but$active)
-  })
   
   actual_but <- reactiveValues(active = 'choropleth')
   
-  
   observe({
-    if (is.null(input$viz_selection)) return()
     viz_rec <- possible_viz()
+    if (is.null(viz_rec)) return()
+    if (is.null(input$viz_selection)) return()
     if (!( input$viz_selection %in% viz_rec)) {
       actual_but$active <- viz_rec[1]
     } else {
@@ -318,10 +352,36 @@ server <- function(input, output, session) {
     }
   })
   
-  # Condicionales de inputs -------------------------------------------------
   
+  output$viz_icons <- renderUI({
+    buttonImageInput('viz_selection',
+                     div(class="title-data-select",i_('viz_type', lang())),
+                     images = possible_viz(),
+                     path = 'img/svg/',
+                     format = 'svg',
+                     active = actual_but$active)
+  })
+  
+  
+  
+  # # Renderizar inputs con parmesan ------------------------------------------
 
-  map_tiles <- reactive({
+  parmesan <- parmesan_load()
+  parmesan_input <- parmesan_watch(input, parmesan)
+  parmesan_alert(parmesan, env = environment())
+  parmesan_lang <- reactive({i_(parmesan, lang(), keys = c("label", "inputs", "text"))})
+  output_parmesan("controls",
+                  parmesan = parmesan_lang,
+                  input = input,
+                  output = output,
+                  env = environment())
+ 
+  tooltip_info <- reactive({
+    i_("tool_info", lang())
+  })
+  
+  
+  map_tiles_opts <- reactive({
     c("OpenStreetMap",
       "OpenStreetMap.Mapnik",
       "OpenTopoMap",
@@ -366,24 +426,6 @@ server <- function(input, output, session) {
       "GeoportailFrance.orthos"
     )
   })
-
-
-  hasdataNum <- reactive({
-     "Num" %in% dic_draw()$hdType
-  })
-  
-  agg_opts <- reactive({
-    choices <- c("sum", "mean", "median")
-    names(choices) <- i_(c("sum", "mean", "median"), lang = lang())
-    choices
-  })
-  
-  conditional_border_weight <- reactive({
-    bw <- input$border_weight
-    bc <- TRUE
-    if (bw == 0) bc <- FALSE
-    bc
-  })
   
   conditional_map_tiles <- reactive({
     # mt <- input$map_tiles
@@ -393,16 +435,24 @@ server <- function(input, output, session) {
     TRUE
   })
   
-  conditional_graticule <- reactive({
-    input$map_graticule
-  })
-  
-  tooltip_info <- reactive({
-    i_("tool_info", lang())
-  })
-  
   map_tiles_info <- reactive({
     i_("tiles_info", lang())
+  })
+  
+  
+  viz_last_active <- reactive({
+    actual_but$active
+  })
+  
+  min_map_bubble <- reactive({
+    if (is.null(input$map_min_size)) return()
+    input$map_min_size + 1
+  })
+  
+  agg_opts <- reactive({
+    choices <- c("sum", "mean", "median")
+    names(choices) <- i_(c("sum", "mean", "median"), lang = lang())
+    choices
   })
   
   map_color_scale <- reactive({
@@ -415,82 +465,10 @@ server <- function(input, output, session) {
     input$map_color_scale
   })
   
-
-  na_color <- reactive({
-    theme_load()$na_color
-  })
-
-  na_info <- reactive({
-    i_("na_info", lang())
-  })
-  
-  viz_last_active <- reactive({
-    actual_but$active
-  })
-
-  min_map_bubble <- reactive({
-    if (is.null(input$map_min_size)) return()
-    input$map_min_size + 1
-  })
-  
-# Mostrar inputs ----------------------------------------------------------
-
-  parmesan <- parmesan_load()
-  parmesan_input <- parmesan_watch(input, parmesan)
-  parmesan_alert(parmesan, env = environment())
-  parmesan_lang <- reactive({i_(parmesan, lang(), keys = c("label", "inputs", "text"))})
-
-
-  output_parmesan("controls",
-                  parmesan = parmesan_lang,
-                  input = input,
-                  output = output,
-                  env = environment())
-  
-  # Adicionar theme ---------------------------------------------------------
-  
-  
-  theme_load <- reactive({
-    theme_select <- input$theme
-    if (is.null(theme_select)) return()
-    print(info_org$org)
-    dsthemer_get(info_org$org, theme = theme_select)
-  })
-  
-  theme_draw <- reactive({
-    l <- theme_load()
-    l <- l[setdiff(names(l), c('logo', 'background_color', 'palette_colors',
-                               'na_color', 'grid_color', 'grid_size'))]
-    l
-  })
-  
-  grid_color <- reactive({
-    theme_load()$grid_color
-  })
-  
-  na_color <- reactive({
-    theme_load()$na_color
-  })
-  
-  background <- reactive({
-    theme_load()$background_color
-  })
-  
-  color_by_opts <- reactive({
-    names(data_draw())
-  })
-  
-  agg_palette <- reactive({
-    colors <- theme_load()$palette_colors[1:2]
-    colors
-  })
-  
-  # logo_include <- reactive({
-  #   theme_load()$branding_include
-  # })
-  # Renderizar highchart plot -----------------------------------------------
-  
+# opts y theme ------------------------------------------------------------
   opts_viz <- reactive({
+    
+    if (is.null(info_org$org)) return()
     opts_viz <- parmesan_input()
     if (is.null(opts_viz)) return()
     opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
@@ -498,11 +476,56 @@ server <- function(input, output, session) {
     opts_viz
   })
   
-
-# visualización -----------------------------------------------------------
-
+  theme_load <- reactive({
+    theme_select <- input$theme
+    print(info_org$org)
+    if (is.null(theme_select)) return()
+    th <- dsthemer_get(info_org$org, theme = theme_select)
+    if (is.null(th)) return()
+    th
+  })
   
+  background <- reactive({
+    req(theme_load())
+    theme_load()$background_color
+  })
   
+  agg_palette <- reactive({
+    req(theme_load())
+    colors <- theme_load()$palette_colors
+    colors
+  })
+  
+  na_color <- reactive({
+    req(theme_load())
+    theme_load()$na_color
+  })
+  
+  na_info <- reactive({
+    i_("na_info", lang())
+  })
+  
+  conditional_border_weight <- reactive({
+    bw <- input$border_weight
+    bc <- TRUE
+    if (bw == 0) bc <- FALSE
+    bc
+  })
+  
+  conditional_graticule <- reactive({
+    input$map_graticule
+  })
+  
+  theme_draw <- reactive({
+    req(theme_load())
+    l <- theme_load()
+    l <- l[setdiff(names(l), c('logo', 'background_color', 'palette_colors',
+                               'na_color', 'grid_color', 'grid_size'))]
+    l
+  })
+  
+# Render mapa -------------------------------------------------------------
+
   viz_name <- reactive({
     if (is.null(ftype_draw())) return()
     if (ftype_draw() == "") return()
@@ -514,10 +537,11 @@ server <- function(input, output, session) {
   })
   
   lftl_viz <- reactive({
-    print( hasdataNum())
+    req(mapa_print())
+    req(data_draw())
     req(opts_viz())
+    req(theme_draw())
     map_select <- mapa_print()
-    if (is.null( map_select)) return()
     viz <- do.call(viz_name(), c(list(data = data_draw(),
                                       map_name = map_select,
                                       opts = c(opts_viz(), theme_draw())
@@ -527,15 +551,24 @@ server <- function(input, output, session) {
   })
   
   output$view_lftl_viz <- renderLeaflet({
-    viz <- lftl_viz()
-    if (is.null(viz)) return()
+    req(lftl_viz())
     suppressWarnings(
-      viz
+      lftl_viz()
     )
-  })  
+  })
+  
+  output$end_sol <- renderUI({
+    if (ftype_draw() %in% available_ftypes) {
+      s <- leafletOutput("view_lftl_viz", height = 500)
+    } else {
+      s <- infomessage(type = "warning", p(style="max-width:300px;",i_("ftypes_warning", lang())))
+    }
+    s
+  })
   
 
-  
+# descarga ----------------------------------------------------------------
+
   
   output$download <- renderUI({
     lb <- i_("download_viz", lang())
@@ -551,13 +584,13 @@ server <- function(input, output, session) {
                  modalButtonLabel = i_("gl_save", lang()), modalLinkLabel = i_("gl_url", lang()), modalIframeLabel = i_("gl_iframe", lang()),
                  modalFormatChoices = c("HTML" = "html", "PNG" = "png"))
   })
-
-
+  
+  
   par <- list(user_name = "brandon")
   url_par <- reactive({
     url_params(par, session)
   })
-
+  
   pin_ <- function(x, bkt, ...) {
     x <- dsmodules:::eval_reactives(x)
     bkt <- dsmodules:::eval_reactives(bkt)
@@ -576,19 +609,18 @@ server <- function(input, output, session) {
     Sys.setlocale(locale = "en_US.UTF-8")
     pin(dv, bucket_id = bkt)
   }
-
-
+  
+  
   observe({
     req(lftl_viz())
     if (is.null(url_par()$inputs$user_name)) return()
-
     downloadDsServer("download_data_button", element = reactive(lftl_viz()),
                      formats = c("html", "jpeg", "pdf", "png"),
                      errorMessage = NULL,#i_("error_down", lang()),
                      modalFunction = pin_, reactive(lftl_viz()),
                      bkt = url_par()$inputs$user_name)
   })
-
+  
   
 }
 
