@@ -1,4 +1,4 @@
-#webshot::install_phantomjs()
+webshot::install_phantomjs()
 library(lfltmagic)
 library(leafem)
 library(paletero)
@@ -27,6 +27,9 @@ style = "
 z-index: 1000;
 bottom: 0px !important;
 right: 5px !important;
+}
+.leaflet-top, .leaflet-bottom {
+    z-index: 1 !important;
 }
 "
 
@@ -148,8 +151,8 @@ server <- function(input, output, session) {
   mapa_print <- reactive({
     if (is.null(info_map$name)) return()
     map_name_select <- input$map_name 
-    print("devbf")
-    print(map_name_select)
+    #print("devbf")
+    #print(map_name_select)
     if (is.null(map_name_select)) {
       map_name_select <- info_map$name
     } 
@@ -473,7 +476,7 @@ server <- function(input, output, session) {
     if (is.null(opts_viz)) return()
     opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
     opts_viz$logo <- info_org$org
-    opts_viz
+    opts_viz %>% discard(is.null)
   })
   
   theme_load <- reactive({
@@ -503,6 +506,11 @@ server <- function(input, output, session) {
   
   na_info <- reactive({
     i_("na_info", lang())
+  })
+  
+  grid_color <- reactive({
+    req(theme_load())
+    theme_load()$grid_color
   })
   
   conditional_border_weight <- reactive({
@@ -540,6 +548,7 @@ server <- function(input, output, session) {
     req(mapa_print())
     req(data_draw())
     req(opts_viz())
+    #print(opts_viz())
     req(theme_draw())
     map_select <- mapa_print()
     viz <- do.call(viz_name(), c(list(data = data_draw(),

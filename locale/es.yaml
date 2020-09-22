@@ -143,3 +143,5 @@ gl_url: URL
 gl_iframe: Copiar para embeber
 data_undefine: No logramos determinar el tipo de datos que estas ingresando, por favor selecciona la varible que contiene el ID o el NOMBRE del mapa que  deseas graficar, o verifica en Mapas q estas seleccionado el mapa correcto, si te sigue sin funcionar, contacta a soporte
 ftypes_warning: Selecciona el país que deseas graficar en MAPAS.
+map_min_size: Mínimo tamaño de burbujas
+map_max_size: Máximo tamaño de burbujas
