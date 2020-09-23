@@ -85,6 +85,8 @@ theme: Tema
 graph_style: Estilo gráfico
 palette_colors: Paleta
 map_color_scale: Escala
+numeric_palette_div: Usa paleta divergente
+numeric_palette: Elige paleta de colores
 summarize_num: Procesamiento números
 agg: Agregación
 agg_info: Puedes escoger el tipo de procesamiento de tu variable númerica.

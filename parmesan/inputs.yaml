@@ -47,10 +47,24 @@ theme:
       - dark
 map_color_scale:
   show: true
+  show_if:
+   color_scale_original():
+     equals: Num
   input_type: selectizeInput
   input_params:
     label: map_color_scale
     choices: map_color_scale()
+numeric_palette_div:
+  show: true
+  show_if:
+   display_palette():
+     equals: sequential
+  input_type: toggleSwitchInput
+  input_params:
+    label: numeric_palette_div
+    on_label: ""
+    off_label: ""
+    value: FALSE
 map_bins:
   show: true
   show_if:
@@ -75,6 +89,9 @@ map_quantile:
     max: 30
 palette_colors:
   show: true
+  show_if:
+   display_palette():
+     equals: categorical
   input_type: colorPaletteInput
   input_params:
     label: palette_colors

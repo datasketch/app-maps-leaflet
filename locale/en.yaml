@@ -85,6 +85,8 @@ map_available: Maps
 graph_style: Graph style
 palette_colors: Palette
 map_color_scale: Color scale
+numeric_palette_div: Use divergent palette
+numeric_palette: Choose color palette
 summarize_num: Numeric process
 agg: Aggregation
 agg_info: You can choose the type of numeric variable processing. 
@@ -109,7 +111,7 @@ background_color: Background color
 topo_fill_opacity: Fill opacity
 na_color: Default color
 na_info: Color when data in NULL
-Numeric: Continuos
+Numeric: Continuous
 Bins: Bins
 Quantile: Quantile
 map_bins: Bins number

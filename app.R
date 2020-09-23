@@ -328,9 +328,6 @@ server <- function(input, output, session) {
     d
   })
   
- 
-  
-  
   ftype_draw <- reactive({
     if (is.null(dic_draw())) return()
     paste0(dic_draw()$hdType, collapse = "-")
@@ -464,8 +461,25 @@ server <- function(input, output, session) {
     choices
   })
   
+  
+  color_scale_original <- reactive({
+    if (is.null(dic_draw())) return()
+    vartype <- dic_draw()$hdType[2]
+    vartype
+  })
+  
   color_scale_select <- reactive({
+    if (is.null(dic_draw())) return()
     input$map_color_scale
+  })
+  
+  display_palette <- reactive({
+    if (is.null(dic_draw())) return()
+    display <- "sequential"
+    if (color_scale_original() == "Cat" | color_scale_select() %in% c("Bins", "Quantile")){
+      display <- "categorical"
+    }
+    display
   })
   
 # opts y theme ------------------------------------------------------------
@@ -476,6 +490,9 @@ server <- function(input, output, session) {
     if (is.null(opts_viz)) return()
     opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
     opts_viz$logo <- info_org$org
+    if (input$numeric_palette_div) {
+      opts_viz$palette_colors_sequential <- dsthemer_get(info_org$org, theme = input$theme, palette = "divergent")$palette_colors
+    }
     opts_viz %>% discard(is.null)
   })
   
@@ -498,6 +515,16 @@ server <- function(input, output, session) {
     colors <- theme_load()$palette_colors
     colors
   })
+  
+  # colourPaletteChoices_sequential <- reactive({
+  #   c("Accent", "Dark2", "Paired", "Pastel1",
+  #     "Pastel2", "Set1", "Set2", "Set3", "Greys")
+  # })
+  # 
+  # colourPaletteChoices_divergent <- reactive({
+  #   c("Accent", "Dark2", "Paired", "Pastel1",
+  #     "Pastel2", "Set1", "Set2", "Set3", "Greys")
+  # })
   
   na_color <- reactive({
     req(theme_load())
@@ -551,12 +578,12 @@ server <- function(input, output, session) {
     #print(opts_viz())
     req(theme_draw())
     map_select <- mapa_print()
+    # browser()
     viz <- do.call(viz_name(), c(list(data = data_draw(),
                                       map_name = map_select,
                                       opts = c(opts_viz(), theme_draw())
     )))
     viz
-    
   })
   
   output$view_lftl_viz <- renderLeaflet({

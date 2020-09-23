@@ -9,6 +9,10 @@ graph_style:
   label: graph_style
   inputs:
     - theme
+    - map_color_scale
+    - numeric_palette_div
+    - map_bins
+    - map_quantile
     - palette_colors
     - map_tiles
     - background_color
@@ -29,9 +33,6 @@ summarize_num:
 legend:
   label: legend 
   inputs: 
-    - map_color_scale
-    - map_bins
-    - map_quantile
     - legend_title
 graticule:
   label: graticule
