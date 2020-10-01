@@ -147,3 +147,4 @@ data_undefine: No logramos determinar el tipo de datos que estas ingresando, por
 ftypes_warning: Selecciona el país que deseas graficar en MAPAS.
 map_min_size: Mínimo tamaño de burbujas
 map_max_size: Máximo tamaño de burbujas
+data_wait: Sube tu base de datos y gráficalos facilmente en un mapa, recuerda que estos datos deben tener una variable con el id o el nombre de la región que quieres que se visualize, o las coordenadas respectivas de longitud y latitud, puedes guiarte con el ejemplo de muestra, traremos de adivinar cuál es la variable que tiene esta información, pero si no lo logramos te invitamos a que nos ayudes seleccionandola en el el selector de variables a gráficar. Muchas gracias.

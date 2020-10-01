@@ -13,7 +13,17 @@ Gnm-Num:
 - bubbles
 Num-Num:
 - bubbles
+Num-Num-Num:
+- bubbles
+Num-Num-Cat:
+- bubbles
 Gnm-Cat:
 - choropleth
 Gcd-Cat:
 - choropleth
+Gnm-Cat-Num:
+- choropleth
+- bubbles
+Gcd-Cat-Num:
+- choropleth
+- bubbles

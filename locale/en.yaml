@@ -143,3 +143,4 @@ data_undefine: We could not determine the type of data you are entering, please 
 ftypes_warning: Select the country you want to plot on MAPS.
 map_min_size: Min bubble size
 map_max_size: Max bubble size
+data_wait: <strong>Upload</strong> your <strong>database</strong> and graph them <strong>easily</strong> on a <strong>map</strong>, remember that these data must have a variable with the id or name of the region that you want to display, or the respective coordinates of longitude and latitude, you can guide yourself with the example of sample, we will try to guess which is the variable that has this information, but if we do not succeed, we invite you to help us by selecting it in the selector of variables to graph. Thank you very much.

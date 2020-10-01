@@ -9,11 +9,6 @@ graph_style:
   label: graph_style
   inputs:
     - theme
-    - map_color_scale
-    - numeric_palette_div
-    - map_bins
-    - map_quantile
-    - palette_colors
     - map_tiles
     - background_color
     - border_weight
@@ -41,3 +36,4 @@ graticule:
     - map_graticule_interval
     - grid_size
     - grid_color
+    

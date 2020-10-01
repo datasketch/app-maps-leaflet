@@ -36,6 +36,11 @@ right: 5px !important;
 ui <- panelsPage(
   showDebug(),
   useShi18ny(),
+  tags$script("
+    Shiny.addCustomMessageHandler('resetValue', function(variableName) {
+      Shiny.onInputChange(variableName, null);
+    });
+  "),
   disconnectMessage(
     text = "Oh no!, la sesión a finalizado, si estabas trabajando en la app, por favor contacta a soporte y cuentanos que ha sucedido//Oh no, the session has ended, if you were working on the app, please contact support and tell us what has happened",
     refresh = "O, intenta de nuevo//Or try again",
@@ -59,7 +64,7 @@ ui <- panelsPage(
           #uiOutput("select_var"),
           #withImage(
           uiOutput("info_dis"),
-          uiOutput("select_var"),
+          uiOutput("var_selector"),
           #verbatimTextOutput("test_url"),
           withLoader(uiOutput("dataset"), type = "image",loader = "img/loading_gris.gif"), 
           # file_location = "img/loading_fucsia.gif"
@@ -69,7 +74,7 @@ ui <- panelsPage(
         color = "chardonnay",
         width = 350,
         body = div(
-          verbatimTextOutput("blabla"),
+          verbatimTextOutput("aver"),
           uiOutput("map_input_selector"),
           uiOutput("controls"))
   ),
@@ -78,9 +83,9 @@ ui <- panelsPage(
         #downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = withLoader(
+        body = #withLoader(
           uiOutput("end_sol"),
-          type = "image",loader = "img/loading_gris.gif"),
+        #type = "image",loader = "img/loading_gris.gif"),
         footer = uiOutput("viz_icons"))
 )
 
@@ -167,8 +172,7 @@ server <- function(input, output, session) {
     
     list_samples <- list.files("data/samples/")
     this_example <- sum(grepl(map_name_select, list_samples))
-    print("ansdjkssak")
-    print(this_example)
+    
     if (this_example > 0) {
       l <- try(list_samples[grepl(map_name_select, list_samples)])
       l <- l[grepl(paste0("_",lang()), l)]
@@ -188,7 +192,6 @@ server <- function(input, output, session) {
     if (lang == "") return()
     req(data_fake())
     files <- data_fake()
-    print("ola")
     
     list(sampleLabel = i_("select_sample", lang()), 
          sampleFiles = files,
@@ -213,9 +216,6 @@ server <- function(input, output, session) {
     do.call(tableInputServer, c("initial_data", labels()))
   })
   
-  # output$debug <- renderPrint({
-  #   inputData()
-  # })
   
   # Vista de datos ----------------------------------------------------------
   
@@ -225,117 +225,165 @@ server <- function(input, output, session) {
     )
   })
   
-  data_fringe <- reactive({
-    req(input$data_input)
-    suppressWarnings(hotr::hotr_fringe(input$data_input))
-  })
   
   data_load <- reactive({
-    req(data_fringe())
-    data_fringe()$data
+    if (is.null(input$data_input)) return()
+    input$data_input$data
   })
   
-
+  # data_load <- reactive({
+  #   # if(inputData()()
+  #   # req(data_fringe())
+  #   # data_fringe()$data
+  # })
+  
+  
   # Tipo de datos -----------------------------------------------------------
   
   
-  guess_ft <- reactive({
-    req(data_load())
-    guess_ft <- guess_ftypes(data = data_load(), mapa_print())
-    guess_ft
-  })
-  
   dic_load <- reactive({
-    req(data_fringe())
-    dic <- data_fringe()$dic
-    if (is.null(guess_ft())) {
-      dic <- dic
-    } else {
-      dic$hdType <- guess_ft()  
-    }
+    req(inputData()())
     
+    d_load <- inputData()()
+    sample_data <- nrow(d_load)
+    if (sample_data > 100) {
+      d_load <- d_load[1:100,]  
+    }
+    dic <- guess_ftypes(data = d_load, mapa_print())
     dic
   })
+  
+  
+  var_select <- reactiveValues(id_default = NULL, all_vars_data = NULL)
+  
+  observe({
+    if(is.null(inputData()())) {
+      var_select$id_default <- NULL
+      var_select$all_vars_data <- NULL
+    } else {
+      req(dic_load())
+      d <- dic_load()
+      geo_var <- grep("Gcd|Gnm", d$hdType)
+      geo_num <- grep("Num", d$hdType)
+      
+      if (!identical(geo_var, integer())) {
+        v <-  sample(d$id_letters[grepl("Gcd|Gnm", d$hdType)], 1)
+        if (!identical(geo_num, integer())) {
+          v <- c(v, sample(d$id_letters[grepl("Num", d$hdType)], 1))
+        }
+      } else {
+        if (identical(geo_num, integer()) | length(geo_num) < 2) {
+          return()
+        } else {
+          v <-  sample(d$id_letters[grepl("Num", d$hdType)], 2)
+        }
+      }
+      var_select$id_default <- v
+      
+      var_select$all_vars_data <- set_names(d$id_letters, d$label)
+    }
+  })
+  
+
+  
   output$info_dis <- renderUI({
-    req(dic_load())
-    if (!is.null(guess_ft())) return()
+    req(dic_draw())
+    ftype <- paste0(dic_draw()$hdType, collapse = "-")
+    is_available <- ftype %in% available_ftypes
+    if (is_available) return()
     shinypanels::infomessage(type = "warning" , i_("data_undefine", lang()))
   })
   
-  output$select_var <- renderUI({
   
-    req(dic_load())
-    dic_load <- dic_load()
-
-    data_ftype <- paste0(dic_load$hdType, collapse = "-")
-    print(dic_load$hdType)
-
-    if (sum(c("Gnm", "Gcd") %in% dic_load$hdType) > 0) {
-      if (data_ftype %in% available_ftypes) {
-        select_var <- dic_load$id
-      } else {
-        sample_cats <- NULL
-        if (sum(c("Gcd", "Gnm") %in% dic_load$hdType) > 0) {
-          if(sum(grepl("Gnm|Gcd", dic_load$hdType)) == 0) sample_cats <- NULL
-          sample_cats <- sample(dic_load$id[grepl("Gnm|Gcd", dic_load$hdType)], 1)}
-        sample_nums <- NULL
-        if (sum(c("Num") %in% dic_load$hdType) > 0) {
-          if(sum(grepl("Num", dic_load$hdType)) == 0) sample_nums <- NULL
-          sample_nums <-  sample(dic_load$id[grepl("Num", dic_load$hdType)], 1)}
-        select_var <- c(sample_cats, sample_nums)
-      }
+  output$var_selector <- renderUI({
+    if (is.null(inputData()())) return(infomessage(HTML(i_("data_wait"))))
+    
+    var_s <- var_select$id_default
+    
+    selectizeInput("var_order",   div(class="title-data-select", i_("var_selector", lang())),
+                   choices =  var_select$all_vars_data,
+                   multiple = TRUE,
+                   selected =  var_s,
+                   options = list(plugins= list('remove_button', 'drag_drop')))
+    
+  })
+  
+  var_default <- reactiveValues(id = 0)
+  observe({
+    if (is.null(inputData()())) {
+      var_default$id <- 0
     } else {
-    select_var <- NULL
+      var_default$id <- 1
     }
     
-    list_var <- dic_load$id
-    names(list_var) <- dic_load$label[match(list_var, dic_load$id)]
-
-    if (!is.null(select_var)) names(select_var) <- dic_load$label[match(select_var, dic_load$id)]
-
-    selectizeInput("var_order",
-                   div(class="title-data-select",i_("var_selector", lang())),
-                   choices = list_var,
-                   multiple = TRUE,
-                   selected = select_var,
-                   options = list(plugins= list('remove_button', 'drag_drop'))
-    )
-
   })
   
-  
-  variables <- reactiveValues(id = NULL)
   observe({
-    if (is.null(input$var_order)) return()
-    variables$id <- input$var_order
+    if(var_default$id == 0) {
+    updateSelectizeInput(session, "var_order", selected = character(0))
+    session$sendCustomMessage(type = "resetValue", message = "var_order")
+    } 
   })
+  
+  
+
+  
   # Preparación data para graficar ------------------------------------------
   
+  var_plot <- reactive({
+    var_sel <- input$var_order
+    if (is.null(var_sel)) var_sel <- var_select$id_default 
+    var_sel
+  })
   
   dic_draw <- reactive({
     req(dic_load())
-    if (is.null(variables$id)) return()
-    var_select <- variables$id
-    dic_load()[dic_load()$id %in% var_select,]
-  })
+    d <- dic_load()
+
+    var_sel <- var_plot()
+    d <- d[d$id_letters %in% var_sel,]
+
+    l_f <- strsplit(available_ftypes, "-")
+    l_f <- map(l_f, function(i){
+      paste0(sort(i), collapse = "-")
+    })
+
+    ind_ftype <- which(sapply(l_f, function(y){
+      paste0(sort(d$hdType), collapse = "-") %in% y
+    })
+    )[1]
+    ind <- strsplit(available_ftypes[ind_ftype], "-") %>% unlist()
+
+    order <- union(ind, unique(d[["hdType"]]))
+    d <- d[order(match(d[["hdType"]], order)), ]
   
-  data_draw <- reactive({
-    if (is.null(variables$id)) return()
-    if (is.null(dic_draw())) return()
-    var_select <- dic_draw()$id 
-    d <- data_load()[var_select]
-    names(d) <- dic_draw()$label
     d
   })
   
+  data_draw <- reactive({
+    
+    if (is.null(inputData()())) return()
+    if(is.null(data_load())) return()
+    req(dic_load())
+    d <- data_load()[var_plot()]
+    names(d) <- dic_draw()[["label"]][match(dic_draw()[["id_letters"]], names(d))]
+    d
+  })
+  
+
+###########################
+  
   ftype_draw <- reactive({
-    if (is.null(dic_draw())) return()
-    paste0(dic_draw()$hdType, collapse = "-")
+    if (is.null(inputData()())) return()
+    req(dic_draw())
+    f_t <- paste0(dic_draw()$hdType, collapse = "-")
+    f_t
   })
   
   possible_viz <- reactive({
-    if (is.null(ftype_draw())) return()
-    frtypes_doc[[ftype_draw()]]
+    f_t <- ftype_draw()
+    if (is.null(f_t)) f_t <- "Gnm-Num"
+    frtypes_doc[[f_t]]
   })
   
   
@@ -364,8 +412,8 @@ server <- function(input, output, session) {
   
   
   
-  # # Renderizar inputs con parmesan ------------------------------------------
-
+  # Renderizar inputs con parmesan ------------------------------------------
+  
   parmesan <- parmesan_load()
   parmesan_input <- parmesan_watch(input, parmesan)
   parmesan_alert(parmesan, env = environment())
@@ -375,11 +423,35 @@ server <- function(input, output, session) {
                   input = input,
                   output = output,
                   env = environment())
- 
+
   tooltip_info <- reactive({
     i_("tool_info", lang())
   })
-  
+
+  color_scale_original <- reactive({
+    req (inputData()())
+    "Num"
+  })
+
+  color_scale_original <- reactive({
+    if (is.null(dic_draw())) return()
+    vartype <- dic_draw()$hdType[2]
+    vartype
+  })
+
+  color_scale_select <- reactive({
+    if (is.null(input$map_color_scale)) return()
+    input$map_color_scale
+  })
+
+  display_palette <- reactive({
+    if (is.null(dic_draw())) return()
+    display <- "sequential"
+    if (color_scale_original() == "Cat" | color_scale_select() %in% c("Bins", "Quantile")){
+      display <- "categorical"
+    }
+    display
+  })
   
   map_tiles_opts <- reactive({
     c("OpenStreetMap",
@@ -426,7 +498,7 @@ server <- function(input, output, session) {
       "GeoportailFrance.orthos"
     )
   })
-  
+
   conditional_map_tiles <- reactive({
     # mt <- input$map_tiles
     # mb <- FALSE
@@ -434,68 +506,50 @@ server <- function(input, output, session) {
     # mb
     TRUE
   })
-  
+
   map_tiles_info <- reactive({
     i_("tiles_info", lang())
   })
-  
-  
+
+
   viz_last_active <- reactive({
     actual_but$active
   })
-  
+
   min_map_bubble <- reactive({
     if (is.null(input$map_min_size)) return()
     input$map_min_size + 1
   })
-  
+
   agg_opts <- reactive({
     choices <- c("sum", "mean", "median")
     names(choices) <- i_(c("sum", "mean", "median"), lang = lang())
     choices
   })
-  
+
   map_color_scale <- reactive({
     choices <- c("Numeric", "Bins", "Quantile")
     names(choices) <- i_(c("Numeric", "Bins", "Quantile"), lang = lang())
     choices
   })
-  
-  
-  color_scale_original <- reactive({
-    if (is.null(dic_draw())) return()
-    vartype <- dic_draw()$hdType[2]
-    vartype
-  })
-  
-  color_scale_select <- reactive({
-    if (is.null(dic_draw())) return()
-    input$map_color_scale
-  })
-  
-  display_palette <- reactive({
-    if (is.null(dic_draw())) return()
-    display <- "sequential"
-    if (color_scale_original() == "Cat" | color_scale_select() %in% c("Bins", "Quantile")){
-      display <- "categorical"
-    }
-    display
-  })
-  
-# opts y theme ------------------------------------------------------------
+
+
+
+
+  # opts y theme ------------------------------------------------------------
   opts_viz <- reactive({
-    
+
     if (is.null(info_org$org)) return()
     opts_viz <- parmesan_input()
     if (is.null(opts_viz)) return()
     opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
     opts_viz$logo <- info_org$org
-    if (input$numeric_palette_div) {
-      opts_viz$palette_colors_sequential <- dsthemer_get(info_org$org, theme = input$theme, palette = "divergent")$palette_colors
-    }
+    # if (input$numeric_palette_div) {
+    #   opts_viz$palette_colors_sequential <- dsthemer_get(info_org$org, theme = input$theme, palette = "divergent")$palette_colors
+    # }
     opts_viz %>% discard(is.null)
   })
-  
+  #
   theme_load <- reactive({
     theme_select <- input$theme
     print(info_org$org)
@@ -504,53 +558,54 @@ server <- function(input, output, session) {
     if (is.null(th)) return()
     th
   })
-  
+
   background <- reactive({
     req(theme_load())
     theme_load()$background_color
   })
-  
+
   agg_palette <- reactive({
     req(theme_load())
     colors <- theme_load()$palette_colors
     colors
   })
-  
+
   # colourPaletteChoices_sequential <- reactive({
   #   c("Accent", "Dark2", "Paired", "Pastel1",
   #     "Pastel2", "Set1", "Set2", "Set3", "Greys")
   # })
-  # 
+  #
   # colourPaletteChoices_divergent <- reactive({
   #   c("Accent", "Dark2", "Paired", "Pastel1",
   #     "Pastel2", "Set1", "Set2", "Set3", "Greys")
   # })
-  
+
   na_color <- reactive({
     req(theme_load())
     theme_load()$na_color
   })
-  
+
   na_info <- reactive({
     i_("na_info", lang())
   })
-  
+
   grid_color <- reactive({
     req(theme_load())
     theme_load()$grid_color
   })
-  
+
   conditional_border_weight <- reactive({
+    if (is.null(input$border_weigth)) return(FALSE)
     bw <- input$border_weight
     bc <- TRUE
     if (bw == 0) bc <- FALSE
     bc
   })
-  
+  #
   conditional_graticule <- reactive({
     input$map_graticule
   })
-  
+
   theme_draw <- reactive({
     req(theme_load())
     l <- theme_load()
@@ -559,25 +614,31 @@ server <- function(input, output, session) {
     l
   })
   
-# Render mapa -------------------------------------------------------------
+  # Render mapa -------------------------------------------------------------
 
   viz_name <- reactive({
-    if (is.null(ftype_draw())) return()
-    if (ftype_draw() == "") return()
-    geotype <- gsub("-", "", ftype_draw())
+    f_t <- ftype_draw()
+    #print("hola")
+    if (is.null(f_t)) f_t <- "Gnm-Num"
+    f_t <- gsub("Num-Num-Num", "Gln-Glt-Num", f_t)
+    f_t <- gsub("Num-Num", "Gln-Glt", f_t)
+    geotype <- gsub("-", "", f_t)
+    if (is.null(actual_but$active)) return()
     gtype <- actual_but$active
-    if (is.null(gtype)) return()
     typeV <- paste0('lflt_', gtype, '_', geotype)
     typeV
   })
-  
+
+  output$aver <- renderPrint({
+    ftype_draw() 
+  })
+
+
   lftl_viz <- reactive({
-    req(mapa_print())
-    req(data_draw())
-    req(opts_viz())
-    #print(opts_viz())
-    req(theme_draw())
+
+    if (is.null(mapa_print())) return()
     map_select <- mapa_print()
+
     # browser()
     viz <- do.call(viz_name(), c(list(data = data_draw(),
                                       map_name = map_select,
@@ -585,76 +646,23 @@ server <- function(input, output, session) {
     )))
     viz
   })
-  
+  # 
   output$view_lftl_viz <- renderLeaflet({
     req(lftl_viz())
     suppressWarnings(
       lftl_viz()
     )
   })
-  
+  # 
   output$end_sol <- renderUI({
-    if (ftype_draw() %in% available_ftypes) {
+    f_t <- ftype_draw()
+    if (is.null(f_t)) f_t <- "Gnm-Num"
+    if (f_t %in% available_ftypes) {
       s <- leafletOutput("view_lftl_viz", height = 500)
     } else {
       s <- infomessage(type = "warning", p(style="max-width:300px;",i_("ftypes_warning", lang())))
     }
     s
-  })
-  
-
-# descarga ----------------------------------------------------------------
-
-  
-  output$download <- renderUI({
-    lb <- i_("download_viz", lang())
-    dw <- i_("download", lang())
-    gl <- i_("get_link", lang())
-    mb <- list(textInput("name", i_("gl_name", lang())),
-               textInput("description", i_("gl_description", lang())),
-               selectInput("license", i_("gl_license", lang()), choices = c("CC0", "CC-BY")),
-               selectizeInput("tags", i_("gl_tags", lang()), choices = list("No tag" = "no-tag"), multiple = TRUE, options = list(plugins= list('remove_button', 'drag_drop'))),
-               selectizeInput("category", i_("gl_category", lang()), choices = list("No category" = "no-category")))
-    downloadDsUI("download_data_button", dropdownLabel = lb, text = dw, formats = c("html","jpeg", "pdf", "png"),
-                 display = "dropdown", dropdownWidth = 170, getLinkLabel = gl, modalTitle = gl, modalBody = mb,
-                 modalButtonLabel = i_("gl_save", lang()), modalLinkLabel = i_("gl_url", lang()), modalIframeLabel = i_("gl_iframe", lang()),
-                 modalFormatChoices = c("HTML" = "html", "PNG" = "png"))
-  })
-  
-  
-  par <- list(user_name = "brandon")
-  url_par <- reactive({
-    url_params(par, session)
-  })
-  
-  pin_ <- function(x, bkt, ...) {
-    x <- dsmodules:::eval_reactives(x)
-    bkt <- dsmodules:::eval_reactives(bkt)
-    nm <- input$`download_data_button-modal_form-name`
-    if (!nzchar(input$`download_data_button-modal_form-name`)) {
-      nm <- paste0("saved", "_", gsub("[ _:]", "-", substr(as.POSIXct(Sys.time()), 1, 19)))
-      updateTextInput(session, "download_data_button-modal_form-name", value = nm)
-    }
-    dv <- dsviz(x,
-                name = nm,
-                description = input$`download_data_button-modal_form-description`,
-                license = input$`download_data_button-modal_form-license`,
-                tags = input$`download_data_button-modal_form-tags`,
-                category = input$`download_data_button-modal_form-category`)
-    dspins_user_board_connect(bkt)
-    Sys.setlocale(locale = "en_US.UTF-8")
-    pin(dv, bucket_id = bkt)
-  }
-  
-  
-  observe({
-    req(lftl_viz())
-    if (is.null(url_par()$inputs$user_name)) return()
-    downloadDsServer("download_data_button", element = reactive(lftl_viz()),
-                     formats = c("html", "jpeg", "pdf", "png"),
-                     errorMessage = NULL,#i_("error_down", lang()),
-                     modalFunction = pin_, reactive(lftl_viz()),
-                     bkt = url_par()$inputs$user_name)
   })
   
   
