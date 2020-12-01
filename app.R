@@ -74,7 +74,7 @@ ui <- panelsPage(
         color = "chardonnay",
         width = 350,
         body = div(
-          verbatimTextOutput("aver"),
+          #verbatimTextOutput("aver"),
           uiOutput("map_input_selector"),
           uiOutput("controls"))
   ),
