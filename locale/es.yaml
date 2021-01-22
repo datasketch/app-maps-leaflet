@@ -143,8 +143,12 @@ gl_category: Categorías
 gl_save: Guardar en dslibrary
 gl_url: URL
 gl_iframe: Copiar para embeber
-data_undefine: No logramos determinar el tipo de datos que estas ingresando, por favor selecciona la varible que contiene el ID o el NOMBRE del mapa que  deseas graficar, o verifica en Mapas q estas seleccionado el mapa correcto, si te sigue sin funcionar, contacta a soporte
-ftypes_warning: Selecciona el país que deseas graficar en MAPAS.
+data_undefine: No logramos determinar el tipo de datos que estas ingresando, por favor selecciona la varible que contiene el ID o el NOMBRE del mapa que  deseas graficar, o verifica en Mapas q estas seleccionado el mapa correcto, si te sigue sin funcionar, contacta a soporte.
+ftypes_warning: Es posible que los datos geograficos que has ingresado no esten habilitados en esta app, asegurate que elegiste la app correcta, o comunicate con soporte.
 map_min_size: Mínimo tamaño de burbujas
 map_max_size: Máximo tamaño de burbujas
-data_wait: Sube tu base de datos y gráficalos facilmente en un mapa, recuerda que estos datos deben tener una variable con el id o el nombre de la región que quieres que se visualize, o las coordenadas respectivas de longitud y latitud, puedes guiarte con el ejemplo de muestra, traremos de adivinar cuál es la variable que tiene esta información, pero si no lo logramos te invitamos a que nos ayudes seleccionandola en el el selector de variables a gráficar. Muchas gracias.
+load_info: Esperando datos
+data_wait: Esperamos tu data para empezar a gráficar, si estas explorando recuerda que puedes jugar con los ejemplos de prueba para que aprendas más sobre el uso de la herramienta.
+data_error: Se ha producido un error al cargar tu base de datos, puedes verificar que&#58; <br/> <ul> <li>La extensión del archivo sea XLS/XLSX ó CSV</li><li>El archivo no tenga codigos extraños, esto puede pasar cuando la codificación es distinta a UTF8</li></ul> 
+ftype_ms: Por ahora no tenemos un gráfico para esa combinación de variables elegida..
+ftype_null: Selecciona las variables que quieres graficar

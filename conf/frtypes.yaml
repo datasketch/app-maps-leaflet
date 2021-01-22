@@ -11,12 +11,6 @@ Gnm:
 Gnm-Num:
 - choropleth
 - bubbles
-Num-Num:
-- bubbles
-Num-Num-Num:
-- bubbles
-Num-Num-Cat:
-- bubbles
 Gnm-Cat:
 - choropleth
 Gcd-Cat:

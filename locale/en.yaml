@@ -140,7 +140,11 @@ gl_save: Save in dslibrary
 gl_url: URL
 gl_iframe: Copy to embed
 data_undefine: We could not determine the type of data you are entering, please select the variable that contains the ID or NAME of the map you want to graph, or check in Maps that you have selected the correct map, if it still does not work, contact support
-ftypes_warning: Select the country you want to plot on MAPS.
+ftypes_warning: It is possible that the geographic data you have entered is not enabled in this app, make sure you chose the correct app, or contact support.
 map_min_size: Min bubble size
 map_max_size: Max bubble size
-data_wait: <strong>Upload</strong> your <strong>database</strong> and graph them <strong>easily</strong> on a <strong>map</strong>, remember that these data must have a variable with the id or name of the region that you want to display, or the respective coordinates of longitude and latitude, you can guide yourself with the example of sample, we will try to guess which is the variable that has this information, but if we do not succeed, we invite you to help us by selecting it in the selector of variables to graph. Thank you very much.
+load_info: Waiting for data
+data_wait: We wait for your data to start graphing, if you are exploring remember that you can play with the test examples to learn more about the use of the tool.
+data_error: There was an error loading your database, you can verify that &#58; <br/> <ul> <li> The file extension is XLS / XLSX or CSV </li> <li> The file does not have strange codes, this can happen when the encoding is different from UTF8 </li> </ul>
+ftype_ms: For now we don't have a graph for that chosen combination of variables.
+ftype_null: Select the variables you want to graph
