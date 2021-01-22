@@ -16,7 +16,7 @@ library(shinycustomloader)
 library(pins)
 library(dspins)
 library(shinydisconnect)
-
+library(shinybusy)
 
 frtypes_doc <- suppressWarnings(yaml::read_yaml("conf/frtypes.yaml"))
 available_ftypes <- names(frtypes_doc)
@@ -42,13 +42,26 @@ ui <- panelsPage(
     });
   "),
   disconnectMessage(
-    text = "Oh no!, la sesión a finalizado, si estabas trabajando en la app, por favor contacta a soporte y cuentanos que ha sucedido//Oh no, the session has ended, if you were working on the app, please contact support and tell us what has happened",
-    refresh = "O, intenta de nuevo//Or try again",
-    background = "#385573",
-    colour = "white",
-    overlayColour = "grey",
-    overlayOpacity = 0.3,
-    refreshColour = "#FBC140"
+    text = "Tu sesión ha finalizado, si tienes algún problema trabajando con la app por favor contáctanos y cuéntanos qué ha sucedido // Your session has ended, if you have any problem working with the app please contact us and tell us what happened.",
+    refresh = "REFRESH",
+    background = "#ffffff",
+    colour = "#435b69",
+    size = 14,
+    overlayColour = "#2a2e30",
+    overlayOpacity = 0.85,
+    refreshColour = "#ffffff",
+    css = "padding: 4.8em 3.5em !important; box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1) !important;"
+  ),
+  busy_start_up(
+    loader = tags$img(
+      src = "img/loading_gris.gif",
+      width = 100
+    ),
+    #text = "Loading...",
+    mode = "auto",
+    #timeout = 3500,
+    color = "#435b69",
+    background = "#FFF"
   ),
   langSelectorInput("lang", position = "fixed"),
   styles = style,
