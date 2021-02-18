@@ -133,16 +133,21 @@ without_data: Mapa sin datos
 branding_include: Mostrar logo
 error_down: ¡Oh, algo a sucedido!, por favor intenta más tarde.
 download_viz: Descarga
-get_link: Obtener enlace
+get_link: Guardar / Publicar
 gl_name: Nombre
 gl_slug: Slug
 gl_description: Descripción
+gl_source: Fuente
+gl_source_name: Título
+gl_source_path: URL
 gl_license: Licencia
 gl_tags: Etiquetas
+gl_type_tags: Presiona enter para agregar cada etiqueta
 gl_category: Categorías
+gl_no_category: Sin categoría
 gl_save: Guardar en dslibrary
-gl_url: URL
 gl_iframe: Copiar para embeber
+gl_url: URL
 data_undefine: No logramos determinar el tipo de datos que estas ingresando, por favor selecciona la varible que contiene el ID o el NOMBRE del mapa que  deseas graficar, o verifica en Mapas q estas seleccionado el mapa correcto, si te sigue sin funcionar, contacta a soporte.
 ftypes_warning: Es posible que los datos geograficos que has ingresado no esten habilitados en esta app, asegurate que elegiste la app correcta, o comunicate con soporte.
 map_min_size: Mínimo tamaño de burbujas

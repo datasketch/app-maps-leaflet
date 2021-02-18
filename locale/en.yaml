@@ -129,16 +129,21 @@ without_data: Map without data
 branding_include: Logo include
 error_down: There has been a problem; try again later.
 download_viz: Download
-get_link: Get link
+get_link: Save / Publish
 gl_name: Name
 gl_slug: Slug
 gl_description: Description
+gl_source: Source
+gl_source_name: Name
+gl_source_path: URL
 gl_license: License
 gl_tags: Tags
+gl_type_tags: Type tag(s) and press enter after each one
 gl_category: Category
+gl_no_category: No category
 gl_save: Save in dslibrary
-gl_url: URL
 gl_iframe: Copy to embed
+gl_url: URL
 data_undefine: We could not determine the type of data you are entering, please select the variable that contains the ID or NAME of the map you want to graph, or check in Maps that you have selected the correct map, if it still does not work, contact support
 ftypes_warning: It is possible that the geographic data you have entered is not enabled in this app, make sure you chose the correct app, or contact support.
 map_min_size: Min bubble size
