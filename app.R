@@ -1,4 +1,4 @@
-webshot::install_phantomjs()
+#webshot::install_phantomjs()
 library(lfltmagic)
 library(leafem)
 library(paletero)
@@ -127,34 +127,17 @@ server <- function(input, output, session) {
   
   # Valores de URL ----------------------------------------------------------
   
-  info_url <- reactiveValues(id = NULL)
-  observe({
-    query <- parseQueryString(session$clientData$url_search)
-    if (identical(query, list())) return()
-    info_url$id <- query
-  })
-  
-  info_org <- reactiveValues(org = "public")
-  info_map <- reactiveValues(name = "world_countries")
-  
-  observe({
-    info_url <- info_url$id
-    if (is.null(info_url)) return()
-    available_params <- names(info_url)
-    
-    if ("org" %in% available_params) {
-      info_org$org <- info_url$org }
-    if ("map_name" %in% available_params) {
-      info_map$name <- strsplit(info_url$map_name, split = ",") %>% unlist()
-    }
+  par <- list(map_name = "world_countries", user_name = "test", org_name = NULL, plan = "basic")
+  url_par <- reactive({
+    url_params(par, session)
   })
   # Data cuando no hay datos de muestra 
   output$map_input_selector <- renderUI({
     
-    if (is.null(info_map$name)) return()
-    if (length(info_map$name) == 1) return()
-    choices <- info_map$name
-    names(choices) <- i_(info_map$name, lang = lang())
+    if (is.null(url_par()$inputs$map_name)) return()
+    if (length(url_par()$inputs$map_name) == 1) return()
+    choices <- url_par()$inputs$map_name
+    names(choices) <- i_(url_par()$inputs$map_name, lang = lang())
     selectizeInput("map_name", i_('map_name'), choices)
     
   })
@@ -218,12 +201,12 @@ server <- function(input, output, session) {
   # Vista de datos ----------------------------------------------------------
   
   mapa_print <- reactive({
-    if (is.null(info_map$name)) return()
-    map_name_select <- input$map_name 
+    if (is.null(url_par()$inputs$map_name)) return()
+    map_name_select <- url_par()$inputs$map_name 
     #print("devbf")
     #print(map_name_select)
     if (is.null(map_name_select)) {
-      map_name_select <- info_map$name
+      map_name_select <- url_par()$inputs$map_name
     } 
     map_name_select
   })
@@ -232,7 +215,7 @@ server <- function(input, output, session) {
   dic_lflt <- reactive({
     req(inputData()())
     if (is.null(mapa_print())) return()
-    lfltmagic::guess_ftypes(inputData()(), info_map$name)
+    lfltmagic::guess_ftypes(inputData()(), url_par()$inputs$map_name)
   })
 
 
@@ -555,14 +538,13 @@ server <- function(input, output, session) {
     # opts y theme ------------------------------------------------------------
     opts_viz <- reactive({
 
-      if (is.null(info_org$org)) return()
+      
+      orgName <- url_par()$inputs$org_name %||% "public"
+      if (! orgName %in% dsthemer::dsthemer_list()) orgName <- "public"
       opts_viz <- parmesan_input()
       if (is.null(opts_viz)) return()
       opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
-      opts_viz$logo <- info_org$org
-      # if (input$numeric_palette_div) {
-      #   opts_viz$palette_colors_sequential <- dsthemer_get(info_org$org, theme = input$theme, palette = "divergent")$palette_colors
-      # }
+      opts_viz$logo <- orgName 
       opts_viz %>% discard(is.null)
     })
     #
@@ -570,7 +552,9 @@ server <- function(input, output, session) {
       theme_select <- input$theme
       #print(info_org$org)
       if (is.null(theme_select)) return()
-      th <- dsthemer_get(info_org$org, theme = theme_select)
+      orgName <- url_par()$inputs$org_name %||% "public"
+      if (! orgName %in% dsthemer::dsthemer_list()) orgName <- "public"
+      th <- dsthemer_get(orgName, theme = theme_select)
       if (is.null(th)) return()
       th
     })
@@ -664,59 +648,48 @@ server <- function(input, output, session) {
         )
       })
 
-
+      
       output$download <- renderUI({
-        lb <- i_("download_viz", lang())
-        dw <- i_("download", lang())
-        gl <- i_("get_link", lang())
-        mb <- list(textInput("name", i_("gl_name", lang())),
-                   textInput("description", i_("gl_description", lang())),
-                   selectInput("license", i_("gl_license", lang()), choices = c("CC0", "CC-BY")),
-                   selectizeInput("tags", i_("gl_tags", lang()), choices = list("No tag" = "no-tag"), multiple = TRUE, options = list(plugins= list('remove_button', 'drag_drop'))),
-                   selectizeInput("category", i_("gl_category", lang()), choices = list("No category" = "no-category")))
-        downloadDsUI("download_data_button", dropdownLabel = lb, text = dw, formats = c("html","jpeg", "pdf", "png"),
-                     display = "dropdown", dropdownWidth = 170, getLinkLabel = gl, modalTitle = gl, modalBody = mb,
-                     modalButtonLabel = i_("gl_save", lang()), modalLinkLabel = i_("gl_url", lang()), modalIframeLabel = i_("gl_iframe", lang()),
-                     modalFormatChoices = c("HTML" = "html", "PNG" = "png"))
-      })
-
-
-      par <- list(user_name = "brandon")
-      url_par <- reactive({
-        url_params(par, session)
-      })
-
-      pin_ <- function(x, bkt, ...) {
-        x <- dsmodules:::eval_reactives(x)
-        bkt <- dsmodules:::eval_reactives(bkt)
-        nm <- input$`download_data_button-modal_form-name`
-        if (!nzchar(input$`download_data_button-modal_form-name`)) {
-          nm <- paste0("saved", "_", gsub("[ _:]", "-", substr(as.POSIXct(Sys.time()), 1, 19)))
-          updateTextInput(session, "download_data_button-modal_form-name", value = nm)
-        }
-        dv <- dsviz(x,
-                    name = nm,
-                    description = input$`download_data_button-modal_form-description`,
-                    license = input$`download_data_button-modal_form-license`,
-                    tags = input$`download_data_button-modal_form-tags`,
-                    category = input$`download_data_button-modal_form-category`)
-        dspins_user_board_connect(bkt)
-        Sys.setlocale(locale = "en_US.UTF-8")
-        pin(dv, bucket_id = bkt)
-      }
-
-
-      observe({
-        req(lftl_viz())
-        if (is.null(url_par()$inputs$user_name)) return()
-
-        downloadDsServer("download_data_button", element = reactive(lftl_viz()),
-                         formats = c("html", "jpeg", "pdf", "png"),
-                         errorMessage = i_("error_down", lang()),
-                         modalFunction = pin_, reactive(lftl_viz()),
-                         bkt = url_par()$inputs$user_name)
+        
+        downloadDsUI("download_data_button",
+                     display = "dropdown",
+                     formats = c("html","jpeg", "pdf", "png"),
+                     dropdownWidth = 170,
+                     modalFormatChoices = c("HTML" = "html", "PNG" = "png"),
+                     text = i_("download", lang()), 
+                     dropdownLabel = i_("download_viz", lang()), 
+                     getLinkLabel = i_("get_link", lang()), 
+                     modalTitle = i_("get_link", lang()), 
+                     modalButtonLabel = i_("gl_save", lang()), 
+                     modalLinkLabel = i_("gl_url", lang()), 
+                     modalIframeLabel = i_("gl_iframe", lang()),
+                     nameLabel = i_("gl_name", lang()),
+                     descriptionLabel = i_("gl_description", lang()),
+                     sourceLabel = i_("gl_source", lang()),
+                     sourceTitleLabel = i_("gl_source_name", lang()),
+                     sourcePathLabel = i_("gl_source_path", lang()),
+                     licenseLabel = i_("gl_license", lang()),
+                     tagsLabel = i_("gl_tags", lang()),
+                     tagsPlaceholderLabel = i_("gl_type_tags", lang()),
+                     categoryLabel = i_("gl_category", lang()),
+                     categoryChoicesLabels = i_("gl_no_category", lang())
+        )
       })
       
+      
+      observe({
+        req(lftl_viz())
+        user_name <- url_par()$inputs$user_name
+        org_name <- url_par()$inputs$org_name 
+        if (is.null(user_name) & is.null(user_name)) return()
+        downloadDsServer(id = "download_data_button",
+                         element = reactive(lftl_viz()),
+                         formats = c("html", "jpeg", "pdf", "png"),
+                         errorMessage = i_("error_down", lang()),
+                         elementType = "dsviz",
+                         user_name = user_name,
+                         org_name = org_name)
+      })
 
 }
 
