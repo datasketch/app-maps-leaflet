@@ -1,0 +1,24 @@
+---
+  - arg_departments
+  - aus_cities
+  - bol_provinces
+  - bra_municipalities
+  - chl_provinces
+  - col_municipalities
+  - ecu_cantons
+  - esp_provinces
+  - esp_municipalities
+  - comunidad_madrid_municipalities
+  - madrid_barrios
+  - gbr_cities
+  - guy_village
+  - mex_states
+  - mex_municipalities
+  - nic_municipalities
+  - pan_districs
+  - per_departments
+  - pry_departments
+  - slv_municipalities
+  - sur_located
+  - usa_counties
+  - venezuela_districs

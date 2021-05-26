@@ -65,6 +65,12 @@ numeric_palette_div:
     on_label: ""
     off_label: ""
     value: FALSE
+text_family:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: text_family
+    choices: fontFamily_opts()
 map_bins:
   show: true
   show_if:
