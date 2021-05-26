@@ -280,17 +280,52 @@ server <- function(input, output, session) {
   })
   
   
-    
+  
   # ploting var -------------------------------------------------------------
   
+  find_plotvars <- reactive({
+    if (is.null(dic_load())) return() # en este caso el mapa es vacio, entonces data es null y el ftype por default es gnmnum
+    dic_p <- dic_load()
+    #dic_p <- data.frame(id = c("a", "b"), label = c("uno", "dos"), hdType = c("Gcd", "Cat"))
+    have_geo <- grepl("Gcd|Gnm", paste0(dic_p$hdType, collapse = "-"))
+    if (!have_geo) return() # se debe mostrar mensaje de advertencia en el q se señala q no se encuentra información geografica que la ponga en los cuadrados
+    geovar <- NULL
+    idgeo <- which(dic_p$hdType %in% c("Gcd", "Gnm"))
+    if (req_levels()) {
+      if (length(idgeo)< 2) return() # en este caso cuando se requieren subniveles deben existir dos columnas con la información geografica
+       geovar <- idgeo[1:2]
+    } else {
+      geovar <- idgeo[1]
+    }
+
+    catvar <- NULL
+    idcat <- which(dic_p$hdType %in% "Cat")
+    if (!identical(idcat, integer())) catvar <- idcat[1]
+    numvar <- NULL
+    idnum <- which(dic_p$hdType %in% "Num")
+    if (!identical(idnum, integer())) numvar <- idnum[1]
+    select_var <- c(geovar, catvar, numvar)
+    select_var
+  })
   
   # geo ftype ---------------------------------------------------------------
-  #ftype <- 
-    
+  
+   ftype <- reactive({
+     req(dic_load())
+     ftype <- NULL
+     if (is.null(find_plotvars())) ftype <- "Gnm-Num"
+     dic_p <- dic_load()
+     dic_p <- dic_p[,find_plotvars()]
+     ftype <- paste0(dic_p$hdType, collapse = "-")
+     ftype
+   })
+  
   
   
   output$printest <- renderPrint({
-    dic_load()
+    list(dic_load(),
+         ftype()
+    )
   })
   
   
