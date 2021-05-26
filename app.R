@@ -293,11 +293,10 @@ server <- function(input, output, session) {
     idgeo <- which(dic_p$hdType %in% c("Gcd", "Gnm"))
     if (req_levels()) {
       if (length(idgeo)< 2) return() # en este caso cuando se requieren subniveles deben existir dos columnas con la información geografica
-       geovar <- idgeo[1:2]
+      geovar <- idgeo[1:2]
     } else {
       geovar <- idgeo[1]
     }
-
     catvar <- NULL
     idcat <- which(dic_p$hdType %in% "Cat")
     if (!identical(idcat, integer())) catvar <- idcat[1]
@@ -310,21 +309,35 @@ server <- function(input, output, session) {
   
   # geo ftype ---------------------------------------------------------------
   
-   ftype <- reactive({
-     req(dic_load())
-     ftype <- NULL
-     if (is.null(find_plotvars())) ftype <- "Gnm-Num"
-     dic_p <- dic_load()
-     dic_p <- dic_p[,find_plotvars()]
-     ftype <- paste0(dic_p$hdType, collapse = "-")
-     ftype
-   })
+  ftype <- reactive({
+    ftype <- NULL
+    if (is.null(find_plotvars())) {
+      ftype <- "Gnm-Num"
+    } else {
+      dic_p <- dic_load()
+      dic_p <- dic_p[,find_plotvars()]
+      ftype <- paste0(dic_p$hdType, collapse = "-")
+    }
+    ftype
+  })
   
   
+  # data plot ---------------------------------------------------------------
+  
+  data_plot <- reactive({
+    if (is.null(find_plotvars())) return()
+    index <- find_plotvars()
+    index_add <- setdiff(seq_along(data_load()), index)
+    if (identical(index_add, integer())) index_add <- NULL
+    index <- c(index, index_add)
+    dp <- data_load()[,index]
+    dp
+  })
   
   output$printest <- renderPrint({
     list(dic_load(),
-         ftype()
+         ftype(),
+         data_plot()
     )
   })
   
