@@ -18,8 +18,6 @@ library(dspins)
 library(shinydisconnect)
 library(shinybusy)
 
-frtypes_doc <- suppressWarnings(yaml::read_yaml("conf/frtypes.yaml"))
-available_ftypes <- names(frtypes_doc)
 data_samples <- suppressWarnings( yaml::read_yaml("data/data-samples.yaml"))
 maps_with_labels <- yaml::read_yaml(file = "conf/map_with_levels.yaml")
 
@@ -78,9 +76,9 @@ ui <- panelsPage(
         width = 450,
         body = div(
           uiOutput("map_select"),
-          
+          uiOutput("user_ftype"),
           # uiOutput("info_dis"),
-          # uiOutput("var_selector"),
+          uiOutput("var_selector"),
           withLoader(uiOutput("dataset"), type = "image",loader = "img/loading_gris.gif")
         )),
   panel(title = ui_("edit_viz"),
@@ -307,37 +305,117 @@ server <- function(input, output, session) {
     select_var
   })
   
-  # geo ftype ---------------------------------------------------------------
   
-  ftype <- reactive({
-    ftype <- NULL
+  var_select <- reactiveValues(id_default = NULL, all_vars_data = NULL)
+  
+  observe({
+    if (is.null(data_load())) return()
     if (is.null(find_plotvars())) {
-      ftype <- "Gnm-Num"
+      var_select$id_default <- NULL
     } else {
-      dic_p <- dic_load()
-      dic_p <- dic_p[,find_plotvars()]
-      ftype <- paste0(dic_p$hdType, collapse = "-")
+      index <- find_plotvars()
+      dic_f <- dic_load()[index,]
+      var_select$id_default <- setNames(dic_f$id, dic_f$label)
     }
-    ftype
+    var_select$all_vars_data <- setNames( dic_load()$id, dic_load()$label)
+  })
+  
+  # var selector ------------------------------------------------------------
+  
+  output$var_selector <- renderUI({
+    if (is.null(data_load())) return()
+    var_s <-  var_select$id_default
+    if (is.null(var_s)) var_s <- input$geovar_user
+    selectizeInput("var_order",   div(class="title-data-select", i_("var_selector", lang())),
+                   choices =  var_select$all_vars_data,
+                   multiple = TRUE,
+                   selected =  var_s,
+                   options = list(plugins= list('remove_button', 'drag_drop')))
+    
+  })
+  
+  # si ftype no contiene gnm o gcd sale un selector donde el usuario debe elegir el tipo de dato
+  observe({
+    if (is.null(data_load())) return()
+    if (is.null(var_select$id_default)) {
+    output$user_ftype <- renderUI({
+      if (!is.null(find_plotvars())) return()
+      div(
+        selectizeInput("geovar_user",
+                       "No podemos encontrar la variable con el detalle geografico, por favor indica cual es",
+                       choices = setNames( dic_load()$id, dic_load()$label),
+                       multiple = TRUE,
+                       selected = NULL,
+                       options = list(plugins= list('remove_button', 'drag_drop'), maxItems = 1)),
+        selectizeInput("geoinfo_user", "Indica que tipo de variable es", setNames(c("Gnm", "Gcd"), c("Name", "Code")))
+      )
+    })
+    }
+  })
+  
+  
+  # dic to find ftype -------------------------------------------------------
+  dic_plot <- reactive({
+    if (is.null(input$var_order)) return()
+    if (is.null(dic_load())) return()
+    dic_plot <- dic_load() %>% filter(id %in% input$var_order)
+    dic_plot
   })
   
   
   # data plot ---------------------------------------------------------------
   
   data_plot <- reactive({
-    if (is.null(find_plotvars())) return()
-    index <- find_plotvars()
-    index_add <- setdiff(seq_along(data_load()), index)
+    #if (is.null(input$var_order)) return()
+    #index <- input$var_order
+    if (is.null(dic_plot())) return()
+    index <- dic_plot()$id
+    index_add <- setdiff(names(data_load()), index)
     if (identical(index_add, integer())) index_add <- NULL
     index <- c(index, index_add)
     dp <- data_load()[,index]
     dp
   })
   
+  
+  # geo ftype ---------------------------------------------------------------
+  
+  ftype <- reactive({
+    ftype <- NULL
+    if (is.null(dic_plot())) {
+      ftype <- "Gnm-Num"
+    } else {
+      dic_p <- dic_plot()$hdType
+      if (length(dic_p) > 3) dic_p[1:3]
+      ftype <- paste0(dic_p, collapse = "-")
+    }
+    ftype
+  })
+  
+  
+  
+  
+  
+  output$viz_icons <- renderUI({
+    suppressWarnings(
+      buttonImageInput('viz_selection',
+                       div(class="title-data-select",i_('viz_type', lang())),
+                       images = c("choropleth", "bubbles"),
+                       path = 'img/svg/')
+    )
+  })
+  
+  
+  
   output$printest <- renderPrint({
-    list(dic_load(),
-         ftype(),
-         data_plot()
+    list(
+      # dic_load(),
+      #    dic_plot(),
+      #    data_plot(),
+      #    ftype(),
+      input$geovar_user,
+         find_plotvars(),
+         input$var_order
     )
   })
   
