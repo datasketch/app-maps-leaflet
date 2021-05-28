@@ -153,3 +153,8 @@ data_wait: We wait for your data to start graphing, if you are exploring remembe
 data_error: There was an error loading your database, you can verify that &#58; <br/> <ul> <li> The file extension is XLS / XLSX or CSV </li> <li> The file does not have strange codes, this can happen when the encoding is different from UTF8 </li> </ul>
 ftype_ms: For now we don't have a graph for that chosen combination of variables.
 ftype_null: Select the variables you want to graph
+sequential: Sequential 
+categorical: Categorical
+divergent: Divergent
+palette_type: Palette type
+

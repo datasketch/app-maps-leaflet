@@ -157,3 +157,10 @@ data_wait: Esperamos tu data para empezar a gráficar, si estas explorando recue
 data_error: Se ha producido un error al cargar tu base de datos, puedes verificar que&#58; <br/> <ul> <li>La extensión del archivo sea XLS/XLSX ó CSV</li><li>El archivo no tenga codigos extraños, esto puede pasar cuando la codificación es distinta a UTF8</li></ul> 
 ftype_ms: Por ahora no tenemos un gráfico para esa combinación de variables elegida..
 ftype_null: Selecciona las variables que quieres graficar
+sequential: Secuencial
+categorical: Categorica
+divergent: Divergente
+palette_type: Tipo de paleta
+
+
+

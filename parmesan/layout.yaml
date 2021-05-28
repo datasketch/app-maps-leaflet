@@ -10,12 +10,8 @@ graph_style:
   label: graph_style
   inputs:
     - theme
+    - palette_type
+    - palette_colors
     - map_tiles
-    - background_color
-    - border_weight
-    - border_color
-    - na_color
-    - topo_fill_opacity
-    - map_zoom   
   
   

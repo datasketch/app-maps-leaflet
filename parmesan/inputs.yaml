@@ -36,6 +36,18 @@ theme:
       - light
       Dark:
       - dark
+palette_type:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: palette_type
+    choices: palette_type_opts()
+palette_colors:
+  show: true
+  input_type: colorPaletteInput
+  input_params:
+    label: palette_colors
+    colors: palette_colors_filter()
 map_tiles:
   show: true
   input_type: selectizeInput
@@ -124,16 +136,6 @@ topo_fill_opacity:
     max: 1
     step: 0.1
     value: 0.8
-na_color:
-  show: true
-  input_type: colorPaletteInput
-  input_params:
-    label: na_color
-    colors: na_color()
-    max_colors: 1
-  input_info:
-    icon: info-circle
-    text: na_info()
 map_zoom:
   show: false
   input_type: checkboxInput

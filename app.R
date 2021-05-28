@@ -452,37 +452,50 @@ server <- function(input, output, session) {
   })
   
   
-  background <- reactive({
-    req(theme_load())
-    theme_load()$background_color
+  # background <- reactive({
+  #   req(theme_load())
+  #   theme_load()$background_color
+  # })
+  
+  palette_type_opts <- reactive({
+    setNames(c("sequential", "categorical", "divergent"), 
+             i_(c("sequential", "categorical", "divergent"), lang = lang()))
+  })
+  
+  palette_colors_filter <- reactive({
+    theme_select <- input$theme
+    if (is.null(theme_select)) return()
+    if (is.null(input$palette_type)) return()
+    orgName <- url_par()$inputs$org_name %||% "public"
+    dsthemer_palette(orgName, theme_select, input$palette_type)
   })
   
   
-  na_color <- reactive({
-    req(theme_load())
-    theme_load()$na_color
-  })
-  
-  na_info <- reactive({
-    i_("na_info", lang())
-  })
-  
-  grid_color <- reactive({
-    req(theme_load())
-    theme_load()$grid_color
-  })
-  
-  conditional_border_weight <- reactive({
-    if (is.null(input$border_weigth)) return(FALSE)
-    bw <- input$border_weight
-    bc <- TRUE
-    if (bw == 0) bc <- FALSE
-    bc
-  })
-  #
-  conditional_graticule <- reactive({
-    input$map_graticule
-  })
+  # na_color <- reactive({
+  #   req(theme_load())
+  #   theme_load()$na_color
+  # })
+  # 
+  # na_info <- reactive({
+  #   i_("na_info", lang())
+  # })
+  # 
+  # grid_color <- reactive({
+  #   req(theme_load())
+  #   theme_load()$grid_color
+  # })
+  # 
+  # conditional_border_weight <- reactive({
+  #   if (is.null(input$border_weigth)) return(FALSE)
+  #   bw <- input$border_weight
+  #   bc <- TRUE
+  #   if (bw == 0) bc <- FALSE
+  #   bc
+  # })
+  # #
+  # conditional_graticule <- reactive({
+  #   input$map_graticule
+  # })
   
   theme_draw <- reactive({
     req(theme_load())
