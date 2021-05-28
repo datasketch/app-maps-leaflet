@@ -1,14 +1,14 @@
+---
 titles:
   label: titles
   inputs:
     - title
     - subtitle
     - caption
-   # - tooltip
+    - tooltip
 graph_style:
   label: graph_style
   inputs:
-    - text_family
     - theme
     - map_tiles
     - background_color
@@ -16,25 +16,6 @@ graph_style:
     - border_color
     - na_color
     - topo_fill_opacity
-    - map_zoom
-    - map_min_size
-    - map_max_size
-summarize_num:
-  label: summarize_num
-  inputs:
-    - agg
-    - format_num_sample
-    - prefix
-    - suffix
-legend:
-  label: legend 
-  inputs: 
-    - legend_title
-graticule:
-  label: graticule
-  inputs:
-    - map_graticule
-    - map_graticule_interval
-    - grid_size
-    - grid_color
-    
+    - map_zoom   
+  
+  

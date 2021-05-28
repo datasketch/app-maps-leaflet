@@ -85,9 +85,7 @@ ui <- panelsPage(
         color = "chardonnay",
         width = 350,
         body = div(
-          #verbatimTextOutput("aver"),
-          verbatimTextOutput("printest"),
-          uiOutput("map_input_selector"),
+          #verbatimTextOutput("printest"),
           uiOutput("controls"))
   ),
   panel(title =  ui_("view_viz"),
@@ -95,8 +93,10 @@ ui <- panelsPage(
         #downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = #withLoader(
-          leafletOutput("view_lftl_viz"),# type = "image",loader = "img/loading_gris.gif"),
+        body = div(
+          uiOutput("error_map"),
+          leafletOutput("view_lftl_viz")
+        ),
         footer = uiOutput("viz_icons"))
 )
 
@@ -260,7 +260,8 @@ server <- function(input, output, session) {
     suppressWarnings(
       hotr("data_input", data = inputData()(), dic = dic_lflt(), options = list(height = 530))
     )
-  })
+  }) %>%
+    bindCache(inputData()(), dic_lflt)
   
   data_load <- reactive({
     req(inputData()())
@@ -338,18 +339,18 @@ server <- function(input, output, session) {
   observe({
     if (is.null(data_load())) return()
     if (is.null(var_select$id_default)) {
-    output$user_ftype <- renderUI({
-      if (!is.null(find_plotvars())) return()
-      div(
-        selectizeInput("geovar_user",
-                       "No podemos encontrar la variable con el detalle geografico, por favor indica cual es",
-                       choices = setNames( dic_load()$id, dic_load()$label),
-                       multiple = TRUE,
-                       selected = NULL,
-                       options = list(plugins= list('remove_button', 'drag_drop'), maxItems = 1)),
-        selectizeInput("geoinfo_user", "Indica que tipo de variable es", setNames(c("Gnm", "Gcd"), c("Name", "Code")))
-      )
-    })
+      output$user_ftype <- renderUI({
+        if (!is.null(find_plotvars())) return()
+        div(
+          selectizeInput("geovar_user",
+                         "No podemos encontrar la variable con el detalle geografico, por favor indica cual es",
+                         choices = setNames( dic_load()$id, dic_load()$label),
+                         multiple = TRUE,
+                         selected = NULL,
+                         options = list(plugins= list('remove_button', 'drag_drop'), maxItems = 1)),
+          selectizeInput("geoinfo_user", "Indica que tipo de variable es", setNames(c("Gnm", "Gcd"), c("Name", "Code")))
+        )
+      })
     }
   })
   
@@ -368,12 +369,15 @@ server <- function(input, output, session) {
   data_plot <- reactive({
     #if (is.null(input$var_order)) return()
     #index <- input$var_order
+    if (is.null(dic_load())) return()
     if (is.null(dic_plot())) return()
     index <- dic_plot()$id
     index_add <- setdiff(names(data_load()), index)
     if (identical(index_add, integer())) index_add <- NULL
     index <- c(index, index_add)
     dp <- data_load()[,index]
+    dic_l <- data.frame(id = names(dp)) %>% left_join(dic_load())
+    names(dp) <- dic_l$label
     dp
   })
   
@@ -382,12 +386,16 @@ server <- function(input, output, session) {
   
   ftype <- reactive({
     ftype <- NULL
-    if (is.null(dic_plot())) {
-      ftype <- "Gnm-Num"
+    dic_p <- dic_plot()
+    if (is.null(dic_p)) {
+      ftype <- "GnmNum"
     } else {
-      dic_p <- dic_plot()$hdType
+      if (!is.null(input$geovar_user)) {
+        dic_p$hdType[dic_p$id == input$geovar_user] <- input$geoinfo_user
+      }
+      dic_p <- dic_p$hdType
       if (length(dic_p) > 3) dic_p[1:3]
-      ftype <- paste0(dic_p, collapse = "-")
+      ftype <- paste0(dic_p, collapse = "")
     }
     ftype
   })
@@ -407,17 +415,145 @@ server <- function(input, output, session) {
   
   
   
-  output$printest <- renderPrint({
-    list(
-      # dic_load(),
-      #    dic_plot(),
-      #    data_plot(),
-      #    ftype(),
-      input$geovar_user,
-         find_plotvars(),
-         input$var_order
-    )
+  # output$printest <- renderPrint({
+  #   list(
+  #     # dic_load(),
+  #     tile_by_theme(),
+  #     dic_plot(),
+  #     #    data_plot(),
+  #     ftype(),
+  #     input$geovar_user,
+  #     find_plotvars(),
+  #     input$var_order
+  #   )
+  # })
+  
+  
+  # Parmesan
+  parmesan <- parmesan_load()
+  parmesan_input <- parmesan_watch(input, parmesan)
+  parmesan_lang <- reactive({
+    i_(parmesan, lang(), keys = c("label", "choices", "text"))
   })
+  output_parmesan("controls", parmesan = parmesan_lang,
+                  input = input, output = output, session = session,
+                  env = environment())
+  
+  #
+  theme_load <- reactive({
+    theme_select <- input$theme
+    #print(info_org$org)
+    if (is.null(theme_select)) return()
+    orgName <- url_par()$inputs$org_name %||% "public"
+    if (! orgName %in% dsthemer::dsthemer_list()) orgName <- "public"
+    th <- dsthemer_get(orgName, theme = theme_select)
+    if (is.null(th)) return()
+    th
+  })
+  
+  
+  background <- reactive({
+    req(theme_load())
+    theme_load()$background_color
+  })
+  
+  
+  na_color <- reactive({
+    req(theme_load())
+    theme_load()$na_color
+  })
+  
+  na_info <- reactive({
+    i_("na_info", lang())
+  })
+  
+  grid_color <- reactive({
+    req(theme_load())
+    theme_load()$grid_color
+  })
+  
+  conditional_border_weight <- reactive({
+    if (is.null(input$border_weigth)) return(FALSE)
+    bw <- input$border_weight
+    bc <- TRUE
+    if (bw == 0) bc <- FALSE
+    bc
+  })
+  #
+  conditional_graticule <- reactive({
+    input$map_graticule
+  })
+  
+  theme_draw <- reactive({
+    req(theme_load())
+    l <- theme_load()
+    l <- l[setdiff(names(l), c('logo', 'background_color', 'palette_colors',
+                               'na_color', 'grid_color', 'grid_size'))]
+    l
+  })
+  tooltip_info <- reactive({
+    i_("tool_info", lang = lang())
+  })
+  
+  
+  map_tiles_info <- reactive({
+    i_("tiles_info", lang())
+  })
+  
+  
+  
+  # render Options changed in parmesan --------------------------------------
+  
+  
+  opts_viz <- reactive({
+    
+    orgName <- url_par()$inputs$org_name %||% "public"
+    if (! orgName %in% dsthemer::dsthemer_list()) orgName <- "public"
+    opts_viz <- parmesan_input()
+    if (is.null(opts_viz)) return()
+    opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
+    opts_viz$logo <- orgName 
+    opts_viz
+  })
+  
+  # Render mapa -------------------------------------------------------------
+  
+  viz_name <- reactive({
+    gtype <- ftype()
+    if (is.null(gtype)) return()
+    plot_it <- input$viz_selection
+    typeV <- paste0('lflt_', plot_it, '_', gtype)
+    typeV
+  })
+  
+  lftl_viz <- reactive({
+    
+    if (is.null(map_name())) return()
+    
+    tryCatch({ 
+      do.call(viz_name(), c(list(data = data_plot(),
+                                 map_name = map_name(),
+                                 opts = c(opts_viz(), theme_draw()
+                                 )
+      )))
+    }, 
+    error = function(e){
+      return()
+    })
+  })
+  #
+  output$view_lftl_viz <- renderLeaflet({
+    lftl_viz()
+  })
+  
+  output$error_map <- renderUI({
+    if (is_null(data_plot())) return()
+    if (!is.null(lftl_viz())) return()
+    tx <- 'Asegurese que el geocode o geoname ingresado coincida con los nombres o el codigo de map_name'
+  })
+  
+  
+  
   
   
 }

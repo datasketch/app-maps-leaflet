@@ -1,13 +1,4 @@
 ---
-map_name:
-  show: true
-#  show_if:
-#   show_list_maps:
-#     equal: true
-  input_type: selectizeInput
-  input_params:
-    label: map_name
-    choices: map_name_opts()
 title:
   show: true
   input_type: textInput
@@ -28,10 +19,10 @@ caption:
     value: 
 tooltip:
   show: true
-  input_type: textInput
+  input_type: passiveTextInput
   input_params:
     label: tooltip
-    value: 
+    value: ""
   input_info:
     icon: info-circle
     text: tooltip_info()
@@ -45,69 +36,54 @@ theme:
       - light
       Dark:
       - dark
-map_color_scale:
-  show: true
-  show_if:
-   color_scale_original():
-     equals: Num
-  input_type: selectizeInput
-  input_params:
-    label: map_color_scale
-    choices: map_color_scale()
-numeric_palette_div:
-  show: true
-  show_if:
-   display_palette():
-     equals: sequential
-  input_type: toggleSwitchInput
-  input_params:
-    label: numeric_palette_div
-    on_label: ""
-    off_label: ""
-    value: FALSE
-text_family:
-  show: true
-  input_type: selectizeInput
-  input_params:
-    label: text_family
-    choices: fontFamily_opts()
-map_bins:
-  show: true
-  show_if:
-   color_scale_select():
-     equals: Bins
-  input_type: numericInput
-  input_params:
-    label: map_bins
-    value: 5
-    min: 1
-    max: 30
-map_quantile:
-  show: true
-  show_if:
-   color_scale_select():
-     equals: Quantile
-  input_type: numericInput
-  input_params:
-    label: map_quantile
-    value: 4
-    min: 1
-    max: 30
-palette_colors:
-  show: true
-  show_if:
-   display_palette():
-     equals: categorical
-  input_type: colorPaletteInput
-  input_params:
-    label: palette_colors
-    colors: agg_palette()
 map_tiles:
   show: true
   input_type: selectizeInput
   input_params:
     label: map_tiles
-    choices: map_tiles_opts()
+    choices: 
+      - "OpenStreetMap"       
+      - "OpenStreetMap.Mapnik"
+      - "OpenTopoMap"
+      - "OpenStreetMap.HOT"
+      - "Stamen.TonerHybrid"
+      - "Stamen.Toner"
+      - "Stamen.TonerBackground"
+      - "Stamen.TonerLite"
+      - "Stamen.Watercolor"
+      - "Stamen.Terrain"
+      - "Stamen.TerrainBackground"
+      - "Esri"
+      - "Esri.WorldStreetMap"
+      - "Esri.DeLorme"
+      - "Esri.WorldTopoMap"
+      - "Esri.WorldImagery"
+      - "Esri.WorldShadedRelief"
+      - "Esri.WorldTerrain"
+      - "Esri.WorldPhysical"
+      - "Esri.OceanBasemap"
+      - "Esri.NatGeoWorldMap"
+      - "Esri.WorldGrayCanvas"
+      - "HERE.reducedDay"
+      - "HERE.normalDayGrey"
+      - "HERE.hybridDay"
+      - "CartoDB"
+      - "CartoDB.PositronNoLabels"
+      - "CartoDB.Voyager"
+      - "CartoDB.VoyagerNoLabels"
+      - "CartoDB.DarkMatter"
+      - "CartoDB.DarkMatterNoLabels"
+      - "MtbMap"
+      - "HikeBike"
+      - "HikeBike.HikeBike"
+      - "HikeBike.HillShading"
+      - "NASAGIBS.ModisTerraBands367CR"
+      - "NASAGIBS.ViirsEarthAtNight2012"
+      - "Wikimedia"
+      - "GeoportailFrance"
+      - "GeoportailFrance.ignMaps"
+      - "GeoportailFrance.maps"
+      - "GeoportailFrance.orthos"
     selected: "OpenStreetMap"
     multiple: true
     options: 
@@ -118,9 +94,6 @@ map_tiles:
     text: map_tiles_info()
 background_color:
   show: true
-  show_if:
-   conditional_map_tiles():
-    equals: true
   input_type: colorPaletteInput
   input_params:
     label: background_color
@@ -137,9 +110,6 @@ border_weight:
     value: 1
 border_color:
   show: true
-  show_if:
-   conditional_border_weight():
-    equals: true
   input_type: colorPaletteInput
   input_params:
     label: border_color
@@ -165,110 +135,7 @@ na_color:
     icon: info-circle
     text: na_info()
 map_zoom:
-  show: true
+  show: false
   input_type: checkboxInput
   input_params:
     label: map_zoom
-    value: true
-legend_title:
-  show: true
-  input_type: textInput
-  input_params:
-    label: legend_title
-    value:
-map_graticule:
-  show: true
-  input_type: toggleSwitchInput
-  input_params:
-    label: map_graticule
-    on_label: ""
-    off_label: ""
-    value: FALSE
-map_graticule_interval:
-  show: true
-  show_if:
-   conditional_graticule():
-    equals: true 
-  input_type: sliderInput
-  input_params:
-    label: map_graticule_interval
-    min: 1
-    max: 100
-    step: 1
-    value: 23
-grid_size:
-  show: true
-  show_if:
-   conditional_graticule():
-    equals: true
-  input_type: numericInput
-  input_params:
-    label: grid_size
-    value: 2
-    min: 1
-    max: 10
-grid_color:
-  show: true
-  show_if:
-   conditional_graticule():
-    equals: true
-  input_type: colorPaletteInput
-  input_params:
-    label: grid_color
-    colors: grid_color()
-    max_colors: 1
-agg:
-  show: true
-  input_type: selectizeInput
-  input_params:
-    label: agg
-    choices: agg_opts()
-format_num_sample:
-  show: true
-  input_type: textInput
-  input_params:
-    label: format_num_sample
-    value: "1,234.5"
-suffix:
-  show: true
-  input_type: textInput
-  input_params:
-    label: suffix
-    value:
-prefix:
-  show: true
-  input_type: textInput
-  input_params:
-    label: prefix
-    value:
-branding_include:
-  show: true
-  input_type: checkboxInput
-  input_params:
-    label: branding_include
-    value: true
-map_min_size:
-  show: true
-  show_if:
-   viz_last_active():
-    equals: bubbles 
-  input_type: sliderInput
-  input_params:
-    label: map_min_size
-    min: 1
-    max: 50
-    step: 1
-    value: 5
-map_max_size:
-  show: true
-  show_if:
-   viz_last_active():
-    equals: bubbles 
-  input_type: sliderInput
-  input_params:
-    label: map_max_size
-    min: min_map_bubble()
-    max: 100
-    step: 1
-    value: 30
-    
