@@ -96,7 +96,7 @@ map_tiles:
       - "GeoportailFrance.ignMaps"
       - "GeoportailFrance.maps"
       - "GeoportailFrance.orthos"
-    selected: "OpenStreetMap"
+    selected: "OpenStreetMap"#tile_by_theme()
     multiple: true
     options: 
       maxItems:
@@ -137,7 +137,19 @@ topo_fill_opacity:
     step: 0.1
     value: 0.8
 map_zoom:
-  show: false
+  show: true
   input_type: checkboxInput
   input_params:
     label: map_zoom
+    value: false
+map_color_by:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: color_by
+    choices: color_by_opts()
+    selected: null
+    multiple: true
+    options: 
+        maxItems:
+        - 1

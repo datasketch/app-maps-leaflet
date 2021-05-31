@@ -12,6 +12,8 @@ graph_style:
     - theme
     - palette_type
     - palette_colors
+    - map_color_by
     - map_tiles
+    - map_zoom
   
   

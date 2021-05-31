@@ -452,22 +452,36 @@ server <- function(input, output, session) {
   })
   
   
-  # background <- reactive({
-  #   req(theme_load())
-  #   theme_load()$background_color
-  # })
+  background <- reactive({
+    req(theme_load())
+    theme_load()$background_color
+  })
   
   palette_type_opts <- reactive({
-    setNames(c("sequential", "categorical", "divergent"), 
+    setNames(c("sequential", "main", "divergent"), 
              i_(c("sequential", "categorical", "divergent"), lang = lang()))
   })
   
   palette_colors_filter <- reactive({
     theme_select <- input$theme
     if (is.null(theme_select)) return()
+    if (is.null(theme_load())) return()
     if (is.null(input$palette_type)) return()
     orgName <- url_par()$inputs$org_name %||% "public"
-    dsthemer_palette(orgName, theme_select, input$palette_type)
+    pc <- dsthemer_palette(orgName, theme_select, input$palette_type)
+    #pc %||% theme_load()$palette_colors
+    pc
+  })
+  
+  tile_by_theme <- reactive({
+    theme_select <- input$theme
+    if (is.null(theme_select)) return()
+    if (theme_select == "dark") {
+      t_out <- "Stamen.Toner"
+    } else {
+      t_out <- "OpenStreetMap"
+    }
+    t_out
   })
   
   
@@ -496,6 +510,14 @@ server <- function(input, output, session) {
   # conditional_graticule <- reactive({
   #   input$map_graticule
   # })
+  
+  color_by_opts <- reactive({
+    if (is.null(dic_load())) return()
+    dic_load()$label
+  })
+  
+  
+  
   
   theme_draw <- reactive({
     req(theme_load())
