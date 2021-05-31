@@ -11,6 +11,7 @@ graph_style:
   inputs:
     - theme
     - map_tiles
+    - background_color
     - palette_type
     - palette_colors
     - map_color_by

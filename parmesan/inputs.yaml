@@ -96,7 +96,7 @@ map_tiles:
       - "GeoportailFrance.ignMaps"
       - "GeoportailFrance.maps"
       - "GeoportailFrance.orthos"
-    selected: tile_by_theme()
+    selected: null #tile_by_theme()
     multiple: true
     options: 
       maxItems:
@@ -106,6 +106,9 @@ map_tiles:
     text: map_tiles_info()
 background_color:
   show: true
+  show_if:
+   tile_is_null():
+     equals: true
   input_type: colorPaletteInput
   input_params:
     label: background_color

@@ -94,6 +94,7 @@ ui <- panelsPage(
         color = "chardonnay",
         can_collapse = FALSE,
         body = div(
+          #verbatimTextOutput("test_tile"),
           uiOutput("error_map"),
           leafletOutput("view_lftl_viz")
         ),
@@ -451,11 +452,7 @@ server <- function(input, output, session) {
     th
   })
   
-  
-  background <- reactive({
-    req(theme_load())
-    theme_load()$background_color
-  })
+
   
   palette_type_opts <- reactive({
     setNames(c("sequential", "main", "divergent"), 
@@ -485,6 +482,19 @@ server <- function(input, output, session) {
     t_out
   })
   
+
+  tile_is_null <- reactive({
+    is.null(input$map_tiles)
+  })
+  
+  # output$test_tile <- renderPrint({
+  #   is.null(input$map_tiles)
+  # })
+  
+  background <- reactive({
+    req(theme_load())
+    theme_load()$background_color
+  })
   
   # na_color <- reactive({
   #   req(theme_load())
