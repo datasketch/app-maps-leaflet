@@ -443,7 +443,7 @@ server <- function(input, output, session) {
   theme_load <- reactive({
     theme_select <- input$theme
     #print(info_org$org)
-    if (is.null(theme_select)) return()
+    if (is.null(theme_select)) theme_select <- "light"
     orgName <- url_par()$inputs$org_name %||% "public"
     if (! orgName %in% dsthemer::dsthemer_list()) orgName <- "public"
     th <- dsthemer_get(orgName, theme = theme_select)
@@ -474,8 +474,9 @@ server <- function(input, output, session) {
   })
   
   tile_by_theme <- reactive({
+    
     theme_select <- input$theme
-    if (is.null(theme_select)) return()
+    if (is.null(theme_select)) theme_select <- "light"
     if (theme_select == "dark") {
       t_out <- "Stamen.Toner"
     } else {

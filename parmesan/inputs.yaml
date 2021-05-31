@@ -96,7 +96,7 @@ map_tiles:
       - "GeoportailFrance.ignMaps"
       - "GeoportailFrance.maps"
       - "GeoportailFrance.orthos"
-    selected: "OpenStreetMap"#tile_by_theme()
+    selected: tile_by_theme()
     multiple: true
     options: 
       maxItems:
