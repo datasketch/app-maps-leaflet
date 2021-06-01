@@ -90,14 +90,10 @@ ui <- panelsPage(
   ),
   panel(title =  ui_("view_viz"),
         title_plugin = uiOutput("download"),
-        #downloadImageUI("down_lfltmagic", "Download", c("html", "png", "jpeg", "pdf"), display = "dropdown"),
         color = "chardonnay",
         can_collapse = FALSE,
-        body = div(
-          #verbatimTextOutput("test_tile"),
-          uiOutput("error_map"),
-          leafletOutput("view_lftl_viz")
-        ),
+        body = 
+          leafletOutput("view_lftl_viz"),
         footer = uiOutput("viz_icons"))
 )
 
@@ -114,15 +110,20 @@ server <- function(input, output, session) {
   lang <- callModule(langSelector, "lang", i18n = i18n, showSelector = FALSE)
   
   observeEvent(lang(),{
-    uiLangUpdate(input$shi18ny_ui_classes, lang())
+    shinyjs::delay(500, uiLangUpdate(input$shi18ny_ui_classes, lang()))
   })
+  
+  
+  current <- reactiveValues(inputData = NULL)
+  
+  # Create modals
   
   output$message_modal_rows <- renderUI({
     div(
       p( style = "margin-bottom: 30px;margin-top: 15px;",
          i_("modal_upgrade_text_rows", lang = lang())),
       
-      shiny::actionButton(inputId='url_upgrade', label= i_("modal_upgrade_button", lang()),
+      shiny::actionButton(inputId='url_upgrade', label= i_("modal_upgrade_button", lang()), 
                           onclick ="window.open('https://datasketch.co/dashboard/upgrade', '_blank')")
     )
   })
@@ -157,6 +158,14 @@ server <- function(input, output, session) {
     url_params(par, session)
   })
   
+
+  
+  # Modulo cuando el plan es basico
+  observe({
+    if (url_par()$inputs$plan == "basic") {
+      shinypanels::showModalMultipleId(modal_id = "modal_plan_controls", list_id = c("output_palette_colors", "output_tooltip"))
+    }
+  })
   
   map_id <- reactive({
     mp <- url_par()$inputs$map_name
@@ -247,6 +256,18 @@ server <- function(input, output, session) {
   
   inputData <- eventReactive(labels(), {
     do.call(tableInputServer, c("initial_data", labels()))
+  })
+  
+  observeEvent(inputData()(), {
+    
+    plan <- url_par()$inputs$plan
+    if(is.null(plan)) plan <- "basic"
+    
+    if(plan == "basic" & nrow(inputData()()) > 150){
+      shinypanels::showModal(modal_id = "modal_plan_rows")
+    } else {
+      current$inputData <- inputData()()
+    }
   })
   
   dic_lflt <- reactive({
@@ -344,12 +365,12 @@ server <- function(input, output, session) {
         if (!is.null(find_plotvars())) return()
         div(
           selectizeInput("geovar_user",
-                         "No podemos encontrar la variable con el detalle geografico, por favor indica cual es",
+                         i_("data_undefine",lang()),#"No podemos encontrar la variable con el detalle geografico, por favor indica cual es",
                          choices = setNames( dic_load()$id, dic_load()$label),
                          multiple = TRUE,
                          selected = NULL,
                          options = list(plugins= list('remove_button', 'drag_drop'), maxItems = 1)),
-          selectizeInput("geoinfo_user", "Indica que tipo de variable es", setNames(c("Gnm", "Gcd"), c("Name", "Code")))
+          selectizeInput("geoinfo_user", i_("ftype_user", lang()), setNames(c("Gnm", "Gcd"), c("Name", "Code")))
         )
       })
     }
@@ -487,56 +508,69 @@ server <- function(input, output, session) {
     is.null(input$map_tiles)
   })
   
-  # output$test_tile <- renderPrint({
-  #   is.null(input$map_tiles)
-  # })
+  output$test_tile <- renderPrint({
+    #theme_load()
+    #parmesan_input()
+  })
   
   background <- reactive({
     req(theme_load())
     theme_load()$background_color
   })
   
-  # na_color <- reactive({
-  #   req(theme_load())
-  #   theme_load()$na_color
-  # })
-  # 
-  # na_info <- reactive({
-  #   i_("na_info", lang())
-  # })
-  # 
-  # grid_color <- reactive({
-  #   req(theme_load())
-  #   theme_load()$grid_color
-  # })
-  # 
-  # conditional_border_weight <- reactive({
-  #   if (is.null(input$border_weigth)) return(FALSE)
-  #   bw <- input$border_weight
-  #   bc <- TRUE
-  #   if (bw == 0) bc <- FALSE
-  #   bc
-  # })
-  # #
-  # conditional_graticule <- reactive({
-  #   input$map_graticule
-  # })
-  
+  na_color <- reactive({
+    req(theme_load())
+    theme_load()$na_color
+  })
+
+  na_info <- reactive({
+    i_("na_info", lang())
+  })
+
+  grid_color <- reactive({
+    req(theme_load())
+    theme_load()$grid_color
+  })
+
+
   color_by_opts <- reactive({
     if (is.null(dic_load())) return()
     dic_load()$label
   })
   
   
+  min_map_bubble <- reactive({
+    min_bubble <- input$map_min_size 
+    if (is.null(min_bubble)) min_bubble <- 1 
+    min_bubble + 1
+  })
+  
+  agg_opts <- reactive({
+    choices <- c("sum", "mean", "median")
+    names(choices) <- i_(c("sum", "mean", "median"), lang = lang())
+    choices
+  })
+  
+  conditional_graticule <- reactive({
+    input$map_graticule
+  })
+  
+  viz_last_active <- reactive({
+    v_s <- input$viz_selection
+    if(is.null(v_s)) v_s <- "choropleth"
+    v_s
+  })
   
   
   theme_draw <- reactive({
     req(theme_load())
     l <- theme_load()
-    l <- l[setdiff(names(l), c('logo', 'background_color', 'palette_colors',
+   
+    l <- l[setdiff(names(l), c('background_color', 'palette_colors', 'branding_include', 'logo',
                                'na_color', 'grid_color', 'grid_size'))]
     l
   })
+  
   tooltip_info <- reactive({
     i_("tool_info", lang = lang())
   })
@@ -558,6 +592,7 @@ server <- function(input, output, session) {
     opts_viz <- parmesan_input()
     if (is.null(opts_viz)) return()
     opts_viz <- opts_viz[setdiff(names(opts_viz), c('theme'))]
+    opts_viz$branding_include <- TRUE
     opts_viz$logo <- orgName 
     opts_viz
   })
@@ -592,13 +627,54 @@ server <- function(input, output, session) {
     lftl_viz()
   })
   
-  output$error_map <- renderUI({
-    if (is_null(data_plot())) return()
-    if (!is.null(lftl_viz())) return()
-    tx <- 'Asegurese que el geocode o geoname ingresado coincida con los nombres o el codigo de map_name'
+  # output$error_map <- renderUI({
+  #   if (is_null(data_plot())) return()
+  #   if (!is.null(lftl_viz())) return()
+  #   tx <- 'Asegurese que el geocode o geoname ingresado coincida con los nombres o el codigo de map_name'
+  # })
+  # 
+  
+  output$download <- renderUI({
+    
+    downloadDsUI("download_data_button",
+                 display = "dropdown",
+                 formats = c("html","jpeg", "pdf", "png"),
+                 dropdownWidth = 170,
+                 modalFormatChoices = c("HTML" = "html", "PNG" = "png"),
+                 text = i_("download", lang()), 
+                 dropdownLabel = i_("download_viz", lang()), 
+                 getLinkLabel = i_("get_link", lang()), 
+                 modalTitle = i_("get_link", lang()), 
+                 modalButtonLabel = i_("gl_save", lang()), 
+                 modalLinkLabel = i_("gl_url", lang()), 
+                 modalIframeLabel = i_("gl_iframe", lang()),
+                 nameLabel = i_("gl_name", lang()),
+                 descriptionLabel = i_("gl_description", lang()),
+                 sourceLabel = i_("gl_source", lang()),
+                 sourceTitleLabel = i_("gl_source_name", lang()),
+                 sourcePathLabel = i_("gl_source_path", lang()),
+                 licenseLabel = i_("gl_license", lang()),
+                 tagsLabel = i_("gl_tags", lang()),
+                 tagsPlaceholderLabel = i_("gl_type_tags", lang()),
+                 categoryLabel = i_("gl_category", lang()),
+                 categoryChoicesLabels = i_("gl_no_category", lang())
+    )
   })
   
   
+  observe({
+    req(lftl_viz())
+    user_name <- url_par()$inputs$user_name
+    org_name <- url_par()$inputs$org_name 
+    if (is.null(user_name) & is.null(user_name)) return()
+    downloadDsServer(id = "download_data_button",
+                     element = reactive(lftl_viz()),
+                     formats = c("html", "jpeg", "pdf", "png"),
+                     errorMessage = i_("error_down", lang()),
+                     elementType = "dsviz",
+                     user_name = user_name,
+                     org_name = org_name)
+  })
   
   
   

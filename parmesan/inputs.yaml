@@ -96,7 +96,7 @@ map_tiles:
       - "GeoportailFrance.ignMaps"
       - "GeoportailFrance.maps"
       - "GeoportailFrance.orthos"
-    selected: null #tile_by_theme()
+    selected: tile_by_theme()
     multiple: true
     options: 
       maxItems:
@@ -130,15 +130,6 @@ border_color:
     label: border_color
     colors: '#293845'
     max_colors: 1
-topo_fill_opacity:
-  show: true
-  input_type: sliderInput
-  input_params:
-    label: topo_fill_opacity
-    min: 0
-    max: 1
-    step: 0.1
-    value: 0.8
 map_zoom:
   show: true
   input_type: checkboxInput
@@ -149,10 +140,115 @@ map_color_by:
   show: true
   input_type: selectizeInput
   input_params:
-    label: color_by
+    label: map_color_by
     choices: color_by_opts()
     selected: null
     multiple: true
     options: 
         maxItems:
         - 1
+na_color:
+  show: true
+  input_type: colorPaletteInput
+  input_params:
+    label: na_color
+    colors: na_color()
+    max_colors: 1
+  input_info:
+    icon: info-circle
+    text: na_info()
+map_min_size:
+  show: true
+  show_if:
+   viz_last_active():
+    equals: bubbles 
+  input_type: sliderInput
+  input_params:
+    label: map_min_size
+    min: 1
+    max: 50
+    step: 1
+    value: 1
+map_max_size:
+  show: true
+  show_if:
+   viz_last_active():
+    equals: bubbles 
+  input_type: sliderInput
+  input_params:
+    label: map_max_size
+    min: min_map_bubble()
+    max: 100
+    step: 1
+    value: 10
+agg:
+  show: true
+  input_type: selectizeInput
+  input_params:
+    label: agg
+    choices: agg_opts()
+format_num_sample:
+  show: true
+  input_type: textInput
+  input_params:
+    label: format_num_sample
+    value: "1,234.5"
+suffix:
+  show: true
+  input_type: textInput
+  input_params:
+    label: suffix
+    value:
+prefix:
+  show: true
+  input_type: textInput
+  input_params:
+    label: prefix
+    value:       
+legend_title:
+  show: true
+  input_type: textInput
+  input_params:
+    label: legend_title
+    value:
+map_graticule:
+  show: true
+  input_type: toggleSwitchInput
+  input_params:
+    label: map_graticule
+    on_label: ""
+    off_label: ""
+    value: FALSE
+map_graticule_interval:
+  show: true
+  show_if:
+   conditional_graticule():
+    equals: true 
+  input_type: sliderInput
+  input_params:
+    label: map_graticule_interval
+    min: 1
+    max: 100
+    step: 1
+    value: 23
+grid_size:
+  show: true
+  show_if:
+   conditional_graticule():
+    equals: true
+  input_type: numericInput
+  input_params:
+    label: grid_size
+    value: 2
+    min: 1
+    max: 10
+grid_color:
+  show: true
+  show_if:
+   conditional_graticule():
+    equals: true
+  input_type: colorPaletteInput
+  input_params:
+    label: grid_color
+    colors: grid_color()
+    max_colors: 1

@@ -15,6 +15,27 @@ graph_style:
     - palette_type
     - palette_colors
     - map_color_by
+    - na_color
+    - border_weight
+    - border_color
     - map_zoom
-  
-  
+    - map_min_size
+    - map_max_size
+summarize_num:
+  label: summarize_num
+  inputs:
+    - agg
+    - format_num_sample
+    - prefix
+    - suffix
+legend:
+  label: legend 
+  inputs: 
+    - legend_title
+graticule:
+  label: graticule
+  inputs:
+    - map_graticule
+    - map_graticule_interval
+    - grid_size
+    - grid_color  

@@ -1,51 +1,51 @@
-Entity,Code,Year,Share of global plastics emitted to ocean
-Agno (Philippines),,2019,0.469647499
-Agusan (Philippines),,2019,0.469647499
-Bharathappuzha (India),,2019,0.357340488
-Cagayan River (Philippines),,2019,0.234823749
-Cagayan de Oro (Philippines),,2019,0.265452934
-Chao Phraya (Thailand),,2019,0.408389129
-Chenzhen River (China),,2019,0.296082119
-Chilyar River (India),,2019,0.234823749
-Cilliwung,,2019,0.285872391
-Davao River (Philippines),,2019,0.265452934
-Douala Estuary,,2019,0.234823749
-Ebrie Lagoon / Komoe (Cote d'Ivoire),,2019,0.336921032
-Ganges (India),,2019,0.633003151
-Hamulauon (Philippines),,2019,0.224614021
-Huangpu (China),,2019,0.367550217
-Hugli (India),,2019,0.398179401
-Iloilo (Philippines),,2019,0.428808586
-Imus (Philippines),,2019,0.316501575
-Jalaur River (Philippines),,2019,0.234823749
-Karnaphuli (Bangladesh),,2019,0.265452934
-Kelani (Sri Lanka),,2019,0.275662662
-Kelantan River (Malaysia),,2019,0.255243206
-Klang (Malaysia),,2019,1.327264671
-Lagos Harbour (Nigeria),,2019,0.408389129
-Langat (Malaysia),,2019,0.285872391
-Libmanan (Philippines),,2019,0.724890705
-Malad Creek (India),,2019,0.275662662
-Malaking Tubig (Philippines),,2019,0.255243206
-Meycauayan (Philippines),,2019,1.225167388
-Mithi River (India),,2019,0.224614021
-Msimbazi River (Tanzania),,2019,0.326711304
-Pampanga (Philippines),,2019,0.949504726
-Panvel Creek (India),,2019,0.255243206
-Paranaque (Philippines),,2019,0.449228042
-Pasig (Philippines),,2019,6.43212879
-Pazundaung Creek (Myamnar),,2019,0.367550217
-Periyar River (India),,2019,0.234823749
-Rio Grande de Mindanao (Philippines),,2019,0.541115597
-Rio Ozama (Dominican Republic),,2019,0.224614021
-Rio Pavuna (Brazil),,2019,0.265452934
-Sarawak (Malaysia),,2019,0.336921032
-Soai Rap (Vietnam),,2019,0.418598858
-Sungai Kuantan (Malaysia),,2019,0.224614021
-"Tambo, Pasay (Philippines)",,2019,0.255243206
-Tullahan (Philippines),,2019,1.327264671
-Ulhas (India),,2019,1.327264671
-Wouri River (Cameroon),,2019,0.285872391
-Yangon River (Myamnar),,2019,0.255243206
-Zapote (Philippines),,2019,0.275662662
-Zhujiang/Canton (China),,2019,0.255243206
+Country,River,Share of global plastics emitted to ocean,Year
+Philippines,Agno ,0.469647499,2019
+Philippines,Agusan ,0.469647499,2019
+India,Bharathappuzha ,0.357340488,2019
+Philippines,Cagayan River ,0.234823749,2019
+Philippines,Cagayan de Oro ,0.265452934,2019
+Thailand,Chao Phraya ,0.408389129,2019
+China,Chenzhen River ,0.296082119,2019
+India,Chilyar River ,0.234823749,2019
+NA,Cilliwung,0.285872391,2019
+Philippines,Davao River ,0.265452934,2019
+NA,Douala Estuary,0.234823749,2019
+Cote d'Ivoire,Ebrie Lagoon / Komoe ,0.336921032,2019
+India,Ganges ,0.633003151,2019
+Philippines,Hamulauon ,0.224614021,2019
+China,Huangpu ,0.367550217,2019
+India,Hugli ,0.398179401,2019
+Philippines,Iloilo ,0.428808586,2019
+Philippines,Imus ,0.316501575,2019
+Philippines,Jalaur River ,0.234823749,2019
+Bangladesh,Karnaphuli ,0.265452934,2019
+Sri Lanka,Kelani ,0.275662662,2019
+Malaysia,Kelantan River ,0.255243206,2019
+Malaysia,Klang ,1.327264671,2019
+Nigeria,Lagos Harbour ,0.408389129,2019
+Malaysia,Langat ,0.285872391,2019
+Philippines,Libmanan ,0.724890705,2019
+India,Malad Creek ,0.275662662,2019
+Philippines,Malaking Tubig ,0.255243206,2019
+Philippines,Meycauayan ,1.225167388,2019
+India,Mithi River ,0.224614021,2019
+Tanzania,Msimbazi River ,0.326711304,2019
+Philippines,Pampanga ,0.949504726,2019
+India,Panvel Creek ,0.255243206,2019
+Philippines,Paranaque ,0.449228042,2019
+Philippines,Pasig ,6.43212879,2019
+Myamnar,Pazundaung Creek ,0.367550217,2019
+India,Periyar River ,0.234823749,2019
+Philippines,Rio Grande de Mindanao ,0.541115597,2019
+Dominican Republic,Rio Ozama ,0.224614021,2019
+Brazil,Rio Pavuna ,0.265452934,2019
+Malaysia,Sarawak ,0.336921032,2019
+Vietnam,Soai Rap ,0.418598858,2019
+Malaysia,Sungai Kuantan ,0.224614021,2019
+Philippines,"Tambo, Pasay ",0.255243206,2019
+Philippines,Tullahan ,1.327264671,2019
+India,Ulhas ,1.327264671,2019
+Cameroon,Wouri River ,0.285872391,2019
+Myamnar,Yangon River ,0.255243206,2019
+Philippines,Zapote ,0.275662662,2019
+China,Zhujiang/Canton ,0.255243206,2019

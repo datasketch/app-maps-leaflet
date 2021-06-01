@@ -157,4 +157,5 @@ sequential: Sequential
 categorical: Categorical
 divergent: Divergent
 palette_type: Palette type
+ftype_user: Indicates what type of variable it is
 
