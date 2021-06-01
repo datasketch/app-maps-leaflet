@@ -158,4 +158,10 @@ categorical: Categorical
 divergent: Divergent
 palette_type: Palette type
 ftype_user: Indicates what type of variable it is
+modal_upgrade_title: Upgrade required
+modal_upgrade_text_controls: To use this feature please upgrade to our Pro plan.
+modal_upgrade_text_rows: To upload a dataset with more than 150 rows, please upgrade to our Pro plan. 
+modal_upgrade_button: Upgrade now
+
+ 
 

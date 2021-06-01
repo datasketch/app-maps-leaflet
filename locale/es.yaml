@@ -162,5 +162,10 @@ categorical: Categorica
 divergent: Divergente
 palette_type: Tipo de paleta
 ftype_user: Indica que tipo de variable es
+modal_upgrade_title: Actualización requerida
+modal_upgrade_text_controls: Para usar esta funcionalidad debes tener un plan pro.
+modal_upgrade_text_rows: Para cargar una base de datos con más de 150 filas debes tener un plan pro.
+modal_upgrade_button: Actualizar plan
+
 
 

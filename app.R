@@ -85,7 +85,7 @@ ui <- panelsPage(
         color = "chardonnay",
         width = 350,
         body = div(
-          #verbatimTextOutput("printest"),
+          verbatimTextOutput("test_tile"),
           uiOutput("controls"))
   ),
   panel(title =  ui_("view_viz"),
@@ -275,13 +275,12 @@ server <- function(input, output, session) {
     req(map_name())
     lfltmagic::guess_ftypes(inputData()(), map_name())
   })
-  
+
   
   output$dataset <- renderUI({
     req(dic_lflt())
-    suppressWarnings(
-      hotr("data_input", data = inputData()(), dic = dic_lflt(), options = list(height = 530))
-    )
+    tryCatch(hotr("data_input", data = current$inputData, dic = dic_lflt(), options = list(height = 530)), 
+             error = function(e) {infomessage(HTML(i_("data_error", lang = lang())))})
   }) %>%
     bindCache(inputData()(), dic_lflt)
   
@@ -509,8 +508,7 @@ server <- function(input, output, session) {
   })
   
   output$test_tile <- renderPrint({
-    #theme_load()
-    #parmesan_input()
+    url_par()$inputs
   })
   
   background <- reactive({
