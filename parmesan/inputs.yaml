@@ -204,13 +204,48 @@ prefix:
   input_type: textInput
   input_params:
     label: prefix
-    value:       
+    value:  
+legend_show:
+  show: true
+  input_type: toggleSwitchInput
+  input_params:
+    label: map_graticule
+    on_label: ""
+    off_label: ""
+    value: true
 legend_title:
   show: true
+  show_if:
+   conditional_legend_show():
+     equals: true
   input_type: textInput
   input_params:
     label: legend_title
     value:
+map_color_scale:
+  show: true
+  show_if:
+   conditional_legend_show():
+     equals: true
+  input_type: selectizeInput
+  input_params:
+    label: map_color_scale
+    choices:
+      - Numeric
+      - Bins
+      - Quantile
+      - Custom
+map_bins:
+  show: true
+  show_if:
+   conditional_bins():
+    equals: Bins
+  input_type: numericInput
+  input_params:
+    label: map_bins
+    value: 5
+    min: 2
+    max: 10
 map_graticule:
   show: true
   input_type: toggleSwitchInput
@@ -218,7 +253,7 @@ map_graticule:
     label: map_graticule
     on_label: ""
     off_label: ""
-    value: FALSE
+    value: false
 map_graticule_interval:
   show: true
   show_if:

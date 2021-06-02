@@ -31,7 +31,10 @@ summarize_num:
 legend:
   label: legend 
   inputs: 
+    - legend_show
     - legend_title
+    - map_color_scale
+    - map_bins
 graticule:
   label: graticule
   inputs:

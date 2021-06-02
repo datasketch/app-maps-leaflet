@@ -85,7 +85,7 @@ ui <- panelsPage(
         color = "chardonnay",
         width = 350,
         body = div(
-          verbatimTextOutput("test_tile"),
+          #verbatimTextOutput("test_tile"),
           uiOutput("controls"))
   ),
   panel(title =  ui_("view_viz"),
@@ -502,14 +502,23 @@ server <- function(input, output, session) {
     t_out
   })
   
+  conditional_legend_show <- reactive({
+    req(input$legend_show)
+    input$legend_show
+  })
 
+  conditional_bins <- reactive({
+   req(input$map_color_scale)  
+    input$map_color_scale
+  })
+  
   tile_is_null <- reactive({
     is.null(input$map_tiles)
   })
   
-  output$test_tile <- renderPrint({
-    url_par()$inputs
-  })
+  # output$test_tile <- renderPrint({
+  #   url_par()$inputs
+  # })
   
   background <- reactive({
     req(theme_load())
