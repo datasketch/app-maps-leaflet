@@ -215,7 +215,7 @@ server <- function(input, output, session) {
       }) %>% unlist()
     } else {
       file <- purrr::map(mp_url, function(mp) {
-        out <- lfltmagic::fakeData(map_name = mp)
+        out <- geodata::fakeData(map_name = mp)
         out
       })
       names(file) <- i_(mp_url, lang)
@@ -273,7 +273,7 @@ server <- function(input, output, session) {
   dic_lflt <- reactive({
     req(inputData()())
     req(map_name())
-    lfltmagic::guess_ftypes(inputData()(), map_name())
+    geodata::guess_ftypes(inputData()(), map_name())
   })
 
   
